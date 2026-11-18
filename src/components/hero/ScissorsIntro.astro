@@ -1,0 +1,107 @@
+---
+import { INTRO_DURATION_MS, INTRO_SESSION_KEY } from '../../lib/intro-state';
+---
+<!-- Must be the first body child. This synchronous gate runs before hero paint.
+     A missing/blocked script leaves the decorative overlay hidden by default. -->
+{import.meta.env.DEV && <script is:inline>
+  if (new URLSearchParams(location.search).get('intro') === 'replay') {
+    document.documentElement.dataset.luxeIntroReplay = 'true';
+  }
+</script>}
+<script is:inline define:vars={{ sessionKey: INTRO_SESSION_KEY, duration: INTRO_DURATION_MS }}>
+  (() => {
+    const root = document.documentElement;
+    root.dataset.luxeIntro = 'idle';
+    try {
+      const replay = root.dataset.luxeIntroReplay === 'true';
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches || document.hidden ||
+          (!replay && sessionStorage.getItem(sessionKey) === '1')) {
+        root.dataset.luxeIntro = 'skipped';
+        return;
+      }
+      sessionStorage.setItem(sessionKey, '1');
+      root.dataset.luxeIntroStarted = String(performance.now());
+      root.dataset.luxeIntro = 'playing';
+      // Independent safety net if the module fails to load or throws.
+      root.dataset.luxeIntroSafety = String(setTimeout(() => {
+        if (root.dataset.luxeIntro === 'playing') {
+          root.dataset.luxeIntro = 'completed';
+          if (document.activeElement?.hasAttribute('data-intro-skip')) {
+            document.getElementById('contenido')?.focus({ preventScroll: true });
+          }
+        }
+        delete root.dataset.luxeIntroSafety;
+        delete root.dataset.luxeIntroStarted;
+        delete root.dataset.luxeIntroReplay;
+      }, duration + 50));
+    } catch { root.dataset.luxeIntro = 'skipped'; }
+  })();
+</script>
+
+<div id="luxe-intro" class="intro">
+  <div class="scene" aria-hidden="true">
+    <div class="panel panel-top"><span class="wordmark">LUXE</span></div>
+    <div class="panel panel-bottom"><span class="scene-caption">El arte de cuidar de vos</span></div>
+    <div class="cut-line"></div>
+    <div class="scissors-track">
+      <!-- Original vector drawn for this project; no icon pack or borrowed logo. -->
+      <svg class="scissors" width="180" height="100" viewBox="0 0 180 100" fill="none" focusable="false">
+        <defs>
+          <linearGradient id="luxe-steel" x1="25" y1="25" x2="140" y2="75" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#726f66"/><stop offset=".28" stop-color="#f1eadf"/>
+            <stop offset=".5" stop-color="#a9aaa5"/><stop offset=".68" stop-color="#f8f4eb"/><stop offset="1" stop-color="#555c58"/>
+          </linearGradient>
+        </defs>
+        <g class="blade blade-upper">
+          <path d="M66 48 163 22c-12 11-45 27-87 33L53 69" fill="url(#luxe-steel)" stroke="#dedbd0" stroke-width="1.4"/>
+          <path d="M53 69c8 12-2 24-15 24-14 0-24-11-20-21 4-11 21-15 35-3Z" stroke="url(#luxe-steel)" stroke-width="6"/>
+          <path d="M25 88c-4 3-10 3-13 0" stroke="#b5b4aa" stroke-width="3" stroke-linecap="round"/>
+        </g>
+        <g class="blade blade-lower">
+          <path d="M66 52 163 78c-12-11-45-27-87-33L53 31" fill="url(#luxe-steel)" stroke="#dedbd0" stroke-width="1.4"/>
+          <path d="M53 31c8-12-2-24-15-24-14 0-24 11-20 21 4 11 21 15 35 3Z" stroke="url(#luxe-steel)" stroke-width="6"/>
+        </g>
+        <circle cx="69" cy="50" r="5.5" fill="#c5a36a" stroke="#f1eadf" stroke-width="1"/>
+        <path d="m66.5 52.5 5-5" stroke="#685333" stroke-width="1.2"/>
+      </svg>
+    </div>
+  </div>
+  <button class="skip" type="button" data-intro-skip>Omitir introducción <span aria-hidden="true">↗</span></button>
+</div>
+
+<script>
+  import '../../scripts/intro';
+</script>
+
+<style>
+  .intro { position: fixed; inset: 0; z-index: 30; visibility: hidden; opacity: 0; pointer-events: none; }
+  .scene { position: absolute; inset: 0; overflow: hidden; }
+  .panel { position: absolute; inset-inline: 0; height: 50.1%; background: linear-gradient(115deg, #101211, #0a211b); }
+  .panel-top { top: 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 3rem; }
+  .panel-bottom { bottom: 0; display: flex; justify-content: center; align-items: flex-start; padding-top: 3rem; }
+  .wordmark { color: var(--ivory); font: 400 clamp(3.5rem, 8vw, 6rem)/1 var(--font-display); letter-spacing: .18em; padding-left: .18em; }
+  .scene-caption { color: var(--gold); font: .6875rem/1.5 var(--font-body); letter-spacing: .2em; text-transform: uppercase; }
+  .cut-line { position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #e5c891; box-shadow: 0 0 8px #c5a36a99; transform-origin: left; transform: scaleX(0); }
+  .scissors-track { position: absolute; top: calc(50% - 50px); left: -163px; width: 180px; }
+  .scissors { overflow: visible; }
+  .blade { transform-origin: 69px 50px; }
+  .skip { position: absolute; z-index: 31; bottom: max(1.5rem, env(safe-area-inset-bottom)); right: max(1.5rem, env(safe-area-inset-right)); min-height: 44px; border: 1px solid #7c806f; padding: .65rem 1rem; background: var(--deep); color: var(--ivory); font: .8125rem/1.4 var(--font-body); cursor: pointer; pointer-events: auto; }
+  .skip span { padding-left: .75rem; color: var(--gold); }
+  :global(html[data-luxe-intro='playing']) .intro { visibility: visible; opacity: 1; animation: fail-open 1500ms steps(1, end) both; }
+  :global(html[data-luxe-intro='playing']) .panel-top { animation: open-top 1500ms cubic-bezier(.76,0,.24,1) both; }
+  :global(html[data-luxe-intro='playing']) .panel-bottom { animation: open-bottom 1500ms cubic-bezier(.76,0,.24,1) both; }
+  :global(html[data-luxe-intro='playing']) .cut-line { animation: cut 1500ms cubic-bezier(.45,0,.35,1) both; }
+  :global(html[data-luxe-intro='playing']) .scissors-track { animation: travel 1500ms cubic-bezier(.45,0,.35,1) both; }
+  :global(html[data-luxe-intro='playing']) .blade-upper { animation: snip-upper 210ms ease-in-out 4 alternate; }
+  :global(html[data-luxe-intro='playing']) .blade-lower { animation: snip-lower 210ms ease-in-out 4 alternate; }
+  :global(html[data-luxe-intro='playing'] [data-intro-reveal]) { animation: text-finish 1500ms ease-out both; }
+  @keyframes fail-open { 0% { visibility: visible; opacity: 1; } 100% { visibility: hidden; opacity: 0; } }
+  @keyframes open-top { 0%, 57% { transform: translateY(0); } 100% { transform: translateY(-101%); } }
+  @keyframes open-bottom { 0%, 57% { transform: translateY(0); } 100% { transform: translateY(101%); } }
+  @keyframes cut { 0%, 6% { transform: scaleX(0); opacity: 1; } 58% { transform: scaleX(1); opacity: 1; } 72%, 100% { transform: scaleX(1); opacity: 0; } }
+  @keyframes travel { 0% { transform: translateX(0); opacity: 0; } 6% { transform: translateX(0); opacity: 1; } 58% { transform: translateX(100vw); opacity: 1; } 65%, 100% { transform: translateX(calc(100vw + 180px)); opacity: 0; } }
+  @keyframes snip-upper { to { transform: rotate(15deg); } }
+  @keyframes snip-lower { to { transform: rotate(-15deg); } }
+  @keyframes text-finish { 0%, 62% { opacity: .8; transform: translateY(8px); } 100% { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .intro { display: none !important; } }
+</style>

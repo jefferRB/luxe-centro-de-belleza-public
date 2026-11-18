@@ -1,0 +1,8 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+/** Real anchor to an allowlisted destination (see data/links.ts). New tab is announced
+ * through the shared #new-tab-hint description, so the accessible name stays the visible text. */
+type Props = Omit<HTMLAttributes<'a'>, 'target' | 'rel'> & { href: string };
+const { href, ...attributes } = Astro.props;
+---
+<a href={href} target="_blank" rel="noopener noreferrer" aria-describedby="new-tab-hint" {...attributes}><slot /></a>

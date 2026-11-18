@@ -1,0 +1,248 @@
+---
+import { getImage } from 'astro:assets';
+import type { RenderableMedia } from '../../data/media';
+import { buildSpaceTour, spaceTour, type SpaceStop } from '../../data/spaces';
+import Icon from '../ui/Icon.astro';
+import { lightboxAttributes } from '../ui/lightbox-image';
+import SpaceCrown from './SpaceCrown.astro';
+import SpacePortal from './SpacePortal.astro';
+import SpaceRings from './SpaceRings.astro';
+interface Props { media: readonly RenderableMedia[]; stops?: readonly SpaceStop[] }
+const { media, stops = spaceTour } = Astro.props;
+const views = await Promise.all(buildSpaceTour(media, stops).map(async (view) => ({
+  ...view,
+  image: view.media.image,
+  alt: view.media.alt,
+  zoom: await lightboxAttributes(view.media.image, view.media.alt, `${view.area} · ${view.title}`),
+  widths: [...new Set([480, 720, 960, 1200].filter((width) => width < view.media.image.width).concat(Math.min(1200, view.media.image.width)))],
+  // A tiny, heavily blurred echo of the same photo fills the portal around it.
+  backdrop: (await getImage({ src: view.media.image, width: 64, format: 'webp', quality: 45 })).src,
+})));
+const first = views[0];
+/** Viewpoints of the immersive camera (poses in lib/space-camera.ts). */
+const viewpoints = [['izquierda', 'Izquierda'], ['frente', 'Frente'], ['elevada', 'Elevada'], ['derecha', 'Derecha']] as const;
+const Scene = first ? 'luxe-space-tour' : 'div';
+---
+<section id="espacio" class="experience section-space scene" aria-labelledby="espacio-title">
+  {/* With photos, the copy lives inside the tour element: on desktop the scene is one grid
+    * (text and the current view's caption on the left, crown and portal on the right). */}
+  <div class="container"><Scene class:list={['experience-grid', { tour: first }]}>
+    <div class="experience-copy">
+      <p class="eyebrow">03 / El espacio</p>
+      <h2 id="espacio-title">Hay lugares que se visitan.<br /><em>Otros que se viven.</em></h2>
+      <p class="experience-text">Conocé los espacios donde sucede todo: la barbería, la peluquería, el área de manicura y la sala de espera, preparados para recibirte.</p>
+      <a class="text-link experience-cta" href="#ubicacion">Ubicación y horario <Icon name="arrow-down" /></a>
+    </div>
+    {first ? (
+      <>
+        <div class="tour-orbit" data-tour-orbit>
+          <SpaceRings />
+          <SpaceCrown views={views} />
+          <SpacePortal views={views} />
+        </div>
+        <div class="tour-caption" data-tour-caption>
+          <p class="tour-area" data-tour-slot="area">{first.area}</p>
+          <p class="tour-title" data-tour-slot="title">{first.title}</p>
+          <p class="tour-description" data-tour-slot="description">{first.description}</p>
+        </div>
+        {/* Camera controls: shown only when the 3D camera runs (space-tour.ts). */}
+        <div class="tour-modes" data-tour-modes hidden>
+          <div class="tour-modes-actions">
+            <button type="button" class="tour-mode tour-mode-enter" data-space-enter><Icon name="diamond" /><span>Entrar a LUXE</span></button>
+            <button type="button" class="tour-mode tour-mode-demo" data-space-demo>Ver recorrido</button>
+          </div>
+          <div class="tour-modes-camera">
+            <button type="button" class="tour-camera-toggle" data-space-explore aria-controls="tour-viewpoints">
+              <svg class="tour-camera-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><ellipse cx="12" cy="13" rx="10.5" ry="3.2" transform="rotate(-16 12 13)" /><path d="M8.6 13.4V10a3.4 3.4 0 0 1 6.8 0v3.4" /></svg>
+              <span data-space-label>Explorar en 3D</span>
+            </button>
+            <div class="tour-viewpoints" id="tour-viewpoints" role="group" aria-label="Punto de vista de la cámara" data-space-viewpoints hidden>
+              <span class="tour-viewpoints-label" aria-hidden="true">Arrastrá o elegí</span>
+              {viewpoints.map(([id, label]) => <button type="button" class="tour-viewpoint" data-viewpoint={id} aria-pressed="false">{label}</button>)}
+            </div>
+          </div>
+        </div>
+        <p class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-tour-status></p>
+        {/* «Entrar a LUXE»: the selected photo in 2D, whole, once the camera reaches it. */}
+        <dialog class="tour-interior" data-tour-interior aria-labelledby="tour-interior-title" aria-describedby="tour-interior-description">
+          <div class="tour-interior-bg" data-interior-bg aria-hidden="true"></div>
+          <div class="tour-interior-layout">
+            <div class="tour-interior-stage" data-interior-stage>
+              <div class="tour-interior-photo" data-interior-photo>
+                <img class="tour-interior-preview" data-interior-preview alt="" aria-hidden="true" decoding="async" draggable="false" />
+                <img class="tour-interior-full" data-interior-full alt="" decoding="async" draggable="false" />
+              </div>
+            </div>
+            <div class="tour-interior-info" data-interior-info>
+              <p class="tour-area" data-interior-area></p>
+              <h3 class="tour-interior-title" id="tour-interior-title" data-interior-title></h3>
+              <p class="tour-interior-description" id="tour-interior-description" data-interior-description></p>
+              <p class="tour-interior-note">Fotografía real del espacio de LUXE.</p>
+              <div class="tour-interior-actions">
+                <button type="button" class="tour-interior-back" data-interior-back><Icon name="arrow-left" /><span>Volver al mundo LUXE</span></button>
+                <button type="button" class="tour-interior-zoom" data-interior-zoom><Icon name="expand" /><span>Ampliar</span></button>
+              </div>
+            </div>
+          </div>
+        </dialog>
+      </>
+    ) : (
+      <div class="experience-empty"><Icon name="diamond" /><p>Tu momento empieza acá.</p><p>Pronto vas a poder recorrer nuestro espacio en fotografías.</p></div>
+    )}
+  </Scene></div>
+</section>
+{first && <script>import '../../scripts/space-tour';</script>}
+<style>
+  /* overflow: clip keeps the portal's light and shadow and the full-bleed crown inside the scene. */
+  .experience { overflow: clip; background: radial-gradient(60% 45% at 72% 38%, #17503f8c, transparent 70%), linear-gradient(180deg, var(--emerald), var(--deep)); border-top: 1px solid #c5a36a40; }
+  .experience-grid { display: grid; gap: clamp(2.25rem, 6cqi, 3rem); }
+  .experience-grid.tour { row-gap: 0; }
+  .tour .experience-copy { margin-bottom: clamp(2.25rem, 6cqi, 3rem); }
+  /* The crown and the portal share one geometry container (the old tour width). */
+  /* Own stacking context: the camera orders cards and rings by depth (z-index up to 31+, see
+   * scripts/space-scene.ts); contained here, they never paint over the fixed header or dock. */
+  .tour { isolation: isolate; }
+  .tour-orbit { container-type: inline-size; position: relative; display: grid; min-width: 0; }
+  h2 { margin-top: 1.25rem; font: 400 clamp(2.4rem, 5cqi, 4.25rem)/1.04 var(--font-display); letter-spacing: -.035em; }
+  h2 em { color: var(--gold); }
+  .experience-text { max-width: 27rem; margin-top: 1.25rem; color: #d3d8cf; font-size: .9375rem; }
+  .experience-cta { margin-top: 1.5rem; color: var(--ivory); }
+  .experience-cta :global(.icon) { color: var(--gold); }
+
+  /* One geometry for the whole experience, in units of the tour's own width (cqi):
+   * the ring radii (--rx, --ry) are shared by the cards and the SVG rings, so they always
+   * line up; the front card overlaps the portal's dome, never the photo (--photo-top). */
+  .tour {
+    container-type: inline-size;
+    position: relative; display: grid; min-width: 0;
+    --rx: min(calc(36cqi + 1.5rem), 21rem);
+    --ry: clamp(2.9rem, 10.5cqi, 5.25rem);
+    --card-w: clamp(8.5rem, 26cqi, 12.75rem);
+    --card-h: clamp(3.9rem, 10.5cqi, 4.75rem);
+    --thumb-w: calc(var(--card-h) * .72);
+    --ring-cy: calc(var(--ry) * .81 + var(--card-h) * .36 + .6rem);
+    --crown-h: calc(var(--ring-cy) + var(--ry) * .7);
+    --frame: clamp(.4rem, 1.4cqi, .65rem);
+    --portal-w: min(calc(100cqi - var(--frame) * 2 - 2px), 30rem, max(60cqi, 22rem));
+    /* Never taller than the screen allows (short laptops, 200 % zoom). */
+    --portal-h: min(calc(var(--portal-w) * 1.27), max(20rem, calc(100svh - 9rem)));
+    --dome: clamp(3.75rem, 14cqi, 6.75rem);
+    --photo-top: calc(var(--ry) * .3 + var(--card-h) * .5 + .55rem);
+  }
+
+  .tour-caption { position: relative; z-index: 1; display: grid; justify-items: center; align-content: start; gap: .4rem; width: 100%; max-width: 34rem; min-height: 9.75rem; margin: clamp(1.5rem, 4cqi, 2.25rem) auto 0; text-align: center; }
+  .tour-area { display: flex; align-items: center; gap: .8rem; color: var(--gold); font-size: .6875rem; letter-spacing: .22em; text-transform: uppercase; }
+  .tour-area::before, .tour-area::after { content: ''; width: 2.25rem; height: 1px; background: linear-gradient(90deg, transparent, #c5a36acc); }
+  .tour-area::after { transform: scaleX(-1); }
+  .tour-title { font: 400 clamp(1.65rem, 4.4cqi, 2.4rem)/1.12 var(--font-display); letter-spacing: -.015em; }
+  .tour-description { max-width: 30rem; color: #d3d8cf; font-size: .875rem; line-height: 1.65; }
+
+  /* Camera controls: discreet pills in the house style; «Entrar a LUXE» carries the gilded edge. */
+  .tour-modes { position: relative; z-index: 1; display: grid; justify-items: center; gap: .6rem; margin-top: 1.25rem; }
+  .tour-modes[hidden] { display: none; }
+  .tour-modes-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .tour-mode { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; padding: .5rem 1.05rem; border: 1px solid #c5a36a59; border-radius: 999px; background: #0a1f19b3; color: var(--ivory); font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; transition: border-color var(--transition-fast), color var(--transition-fast), opacity var(--transition-fast); }
+  .tour-mode:hover { border-color: var(--gold); color: var(--gold); }
+  .tour-mode:focus-visible, .tour-viewpoint:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .tour-mode :global(.icon) { width: .95rem; height: .95rem; color: var(--gold); }
+  .tour-mode-enter { border-color: #d9bc85; background: linear-gradient(155deg, #1d5847f5, #0b2a22f8 58%, #071813fa); box-shadow: 0 0 0 1px #c5a36a33, 0 0 1.75rem -.5rem #c5a36a59, inset 0 1px 0 #f6e7c440; }
+  .tour-mode[data-busy], .tour-camera-toggle[data-busy] { opacity: .5; }
+  /* The camera toggle: a quieter control under the two actions, with the ring as its glyph. */
+  .tour-modes-camera { display: grid; justify-items: center; gap: .25rem; }
+  .tour-camera-toggle { display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; padding: .35rem .25rem; border: 0; background: none; color: #d3d8cf; font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; transition: color var(--transition-fast), opacity var(--transition-fast); }
+  .tour-camera-toggle span { padding-bottom: .2rem; border-bottom: 1px solid #c5a36a59; transition: border-color var(--transition-fast); }
+  .tour-camera-toggle:hover { color: var(--gold); }
+  .tour-camera-toggle:hover span { border-color: var(--gold); }
+  .tour-camera-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .tour-camera-glyph { width: 1.35rem; height: 1.35rem; fill: none; stroke: var(--gold); stroke-width: 1.1; }
+  .tour-camera-glyph path { stroke-linecap: round; }
+  .tour-mode[hidden] { display: none; }
+  .tour-mode-demo[aria-pressed='true'] { border-color: var(--gold); color: var(--gold); }
+  /* The viewpoint row keeps its place while hidden: nothing shifts when the mode changes. */
+  .tour-viewpoints { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .35rem; min-height: 2.25rem; }
+  .tour-viewpoints[hidden] { display: flex; visibility: hidden; }
+  .tour-viewpoints-label { margin-right: .35rem; color: var(--color-muted); font-size: .625rem; letter-spacing: .16em; text-transform: uppercase; }
+  .tour-viewpoint { min-height: 2.25rem; padding: .3rem .8rem; border: 1px solid #c5a36a33; border-radius: 999px; background: none; color: #d3d8cf; font-size: .75rem; letter-spacing: .04em; transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast); }
+  .tour-viewpoint:hover { border-color: #c5a36a99; color: var(--ivory); }
+  .tour-viewpoint[aria-pressed='true'] { border-color: var(--gold); background: #c5a36a14; color: var(--gold); }
+
+  /* Camera modes. In mode B the scene is dragged (horizontal on touch: the page keeps its
+   * vertical scroll); while the camera enters the portal the scene rises over the copy. */
+  :global(luxe-space-tour[data-camera='free']) .tour-orbit { cursor: grab; touch-action: pan-y; }
+  :global(luxe-space-tour[data-camera-dragging]) .tour-orbit { cursor: grabbing; }
+  :global(luxe-space-tour[data-camera='free']) { --px: 0 !important; --py: 0 !important; }
+  :global(luxe-space-tour:is([data-camera='flight'], [data-camera='interior'])) .tour-orbit { z-index: 3; }
+  /* «Detener recorrido» stays reachable above the scene while it flies. */
+  :global(luxe-space-tour[data-camera='flight']) .tour-modes { z-index: 4; }
+
+  /* Interior view: the real photo, whole, over a dark echo of itself that drifts very slowly. */
+  .tour-interior { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; overflow: auto; overscroll-behavior: contain; border: 0; background: transparent; color: var(--ivory); }
+  .tour-interior::backdrop { background: transparent; }
+  .tour-interior-bg { position: fixed; inset: 0; overflow: hidden; background: #050e0b; }
+  /* Rasterised at a quarter of the size and scaled up: the same softness, a fraction of the blur work. */
+  .tour-interior-bg::before { content: ''; position: absolute; inset: 37.5%; background: var(--interior-backdrop, none) center / cover no-repeat; filter: blur(10px) saturate(1.2) brightness(.5); transform: scale(4.6); }
+  .tour-interior-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(80% 70% at 50% 42%, #0f3a2f26, #030a08e6 100%), linear-gradient(180deg, #03100cb3, transparent 28%, transparent 72%, #030a08e6); }
+  .tour-interior-layout { position: relative; display: grid; grid-template-rows: auto auto; align-content: center; gap: 1.25rem; min-height: 100%; padding: max(1rem, env(safe-area-inset-top)) var(--gutter) max(1.5rem, env(safe-area-inset-bottom)); }
+  /* Phones: the stage is as tall as the photo needs, up to a cap (space-interior.ts reads it). */
+  .tour-interior-stage { display: grid; place-items: center; max-height: min(62svh, 44rem); min-width: 0; }
+  .tour-interior-photo { position: relative; overflow: hidden; border-radius: .9rem; background: #050e0b; box-shadow: 0 0 0 1px #c5a36a66, 0 0 0 .45rem #0a211bcc, 0 0 0 calc(.45rem + 1px) #c5a36a33, 0 2.5rem 5rem -1.5rem #000, 0 0 5rem -1rem #c5a36a33; transform-origin: 0 0; }
+  .tour-interior-photo img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; }
+  .tour-interior-full { opacity: 0; transition: opacity 420ms ease; }
+  .tour-interior-full[data-loaded] { opacity: 1; }
+  .tour-interior-info { display: grid; justify-items: center; gap: .5rem; max-width: 34rem; margin-inline: auto; text-align: center; }
+  .tour-interior-info > * { margin: 0; }
+  .tour-interior-title { margin-top: .15rem; font: 400 clamp(1.7rem, 4.5vw, 2.6rem)/1.1 var(--font-display); letter-spacing: -.015em; }
+  .tour-interior-description { max-width: 30rem; margin-top: .35rem; color: #d3d8cf; font-size: .9375rem; line-height: 1.65; }
+  .tour-interior-note { color: var(--color-muted); font-size: .75rem; letter-spacing: .04em; }
+  .tour-interior-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin-top: .75rem; }
+  .tour-interior-back, .tour-interior-zoom { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; padding: .55rem 1.15rem; border: 1px solid #c5a36a66; border-radius: 999px; background: #101211b3; color: var(--ivory); font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; }
+  .tour-interior-back { border-color: #d9bc85; background: linear-gradient(155deg, #1d5847f5, #0b2a22f8 58%, #071813fa); box-shadow: 0 0 1.75rem -.5rem #c5a36a59, inset 0 1px 0 #f6e7c440; }
+  .tour-interior-back :global(.icon), .tour-interior-zoom :global(.icon) { width: 1rem; height: 1rem; color: var(--gold); }
+  .tour-interior-back:hover, .tour-interior-zoom:hover { border-color: var(--gold); color: var(--gold); }
+  .tour-interior-back:focus-visible, .tour-interior-zoom:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  @media (min-width: 64rem) {
+    .tour-interior-layout { grid-template-columns: minmax(0, 1fr) minmax(17rem, 24rem); grid-template-rows: none; align-items: center; gap: clamp(2rem, 4vw, 4rem); padding-block: clamp(1.5rem, 4svh, 2.5rem); }
+    .tour-interior-stage { height: calc(100svh - clamp(1.5rem, 4svh, 2.5rem) * 2); max-height: none; }
+    .tour-interior-info { justify-items: start; margin: 0; text-align: left; }
+    .tour-interior-info .tour-area::before { display: none; }
+    .tour-interior-info .tour-area::after { transform: none; background: linear-gradient(90deg, #c5a36acc, transparent); }
+    .tour-interior-actions { justify-content: flex-start; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .tour-interior-bg::before { animation: interior-drift 20s ease-in-out infinite alternate; }
+    @keyframes interior-drift { from { transform: scale(4.6); } to { transform: scale(4.92) translate3d(-.35%, -.25%, 0); } }
+  }
+  /* A recorded flight is pure motion: not offered when motion is reduced. */
+  @media (prefers-reduced-motion: reduce) {
+    .tour-mode-demo { display: none; }
+  }
+
+  .experience-empty { display: grid; gap: .75rem; padding: 2.5rem 0; border-block: 1px solid #c5a36a66; }
+  .experience-empty :global(.icon) { width: 3rem; height: 3rem; color: var(--gold); }
+  .experience-empty p:first-of-type { font: 400 2rem/1.3 var(--font-display); }
+  @container (min-width: 60rem) {
+    .experience-grid { grid-template-columns: minmax(0, .9fr) minmax(0, 1.55fr); column-gap: clamp(2.5rem, 5cqi, 5rem); align-items: center; }
+    .experience-copy { padding-bottom: 6rem; }
+    /* Tour scene: the text and the caption of the view in front stand together on the left,
+     * centred against the crown and portal on the right. */
+    .experience-grid.tour { grid-template-rows: 1fr auto auto auto 1fr; align-items: start; }
+    .tour .experience-copy { grid-column: 1; grid-row: 2; padding-bottom: 0; margin-bottom: clamp(1.5rem, 4svh, 2.5rem); }
+    .tour-orbit { grid-column: 2; grid-row: 1 / -1; align-self: center; }
+    .tour-caption { grid-column: 1; grid-row: 3; justify-items: start; max-width: 27rem; min-height: 9rem; margin: 0; padding-top: clamp(1.1rem, 3svh, 1.75rem); border-top: 1px solid #c5a36a33; text-align: left; }
+    .tour-area::before { display: none; }
+    .tour-area::after { transform: none; background: linear-gradient(90deg, #c5a36acc, transparent); }
+    .tour-title { font-size: clamp(1.5rem, min(2.4cqi, 4.2svh), 2.2rem); }
+    .tour-modes { grid-column: 1; grid-row: 4; justify-items: start; margin-top: clamp(.9rem, 2.4svh, 1.4rem); }
+    .tour-modes-actions, .tour-viewpoints { justify-content: flex-start; }
+    .tour-modes-camera { justify-items: start; }
+  }
+  /* Desktop scene: the portal takes the height the screen leaves under the crown, and keeps
+   * its arched proportion (narrower when shorter) so the photo inside is never cropped. */
+  @media (min-width: 64rem) and (min-height: 34rem) {
+    .tour {
+      --portal-h: min(calc(min(30rem, 60cqi) * 1.27), calc(var(--scene-avail) - var(--crown-h) - var(--frame) * 2 - 2px));
+      --portal-w: min(30rem, max(60cqi, 22rem), calc(100cqi - var(--frame) * 2 - 2px), calc(var(--portal-h) / 1.16));
+    }
+    .experience h2 { font-size: var(--scene-title); }
+  }
+</style>

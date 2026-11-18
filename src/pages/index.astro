@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EditorialTransition from '../components/sections/EditorialTransition.astro';
+import Hero from '../components/hero/Hero.astro';
+import ServicesSection from '../components/sections/ServicesSection.astro';
+import LuxeShowcase from '../components/sections/LuxeShowcase.astro';
+import ExperienceSection from '../components/sections/ExperienceSection.astro';
+import VisitSection from '../components/sections/VisitSection.astro';
+import Lightbox from '../components/ui/Lightbox.astro';
+import { getHeroPhoto, getMedia, getServiceGroups, getSpaceStops, getVideos } from '../data/media';
+import { buildPortfolio } from '../data/portfolio';
+import '../styles/sections.css';
+import '../styles/scenes.css';
+const media = await getMedia();
+const videos = await getVideos();
+const portfolio = buildPortfolio(media);
+const hero = await getHeroPhoto();
+const stops = getSpaceStops();
+// Social preview card (public/og-image.jpg, 1200×630, from scripts/generate-og-image.ts):
+// a stable public URL that WhatsApp/Facebook crawlers can fetch and cache.
+const ogImage = { src: '/og-image.jpg', width: 1200, height: 630, alt: 'LUXE Centro de Belleza Familiar: recepción con el logotipo LUXE en Concepción, La Unión, Cartago' };
+---
+<BaseLayout ogImage={ogImage}>
+  <Hero photo={hero} />
+  <EditorialTransition />
+  <ServicesSection media={media} videos={videos} groups={getServiceGroups()} stops={stops} />
+  <LuxeShowcase items={portfolio} />
+  <ExperienceSection media={media} stops={stops} />
+  <VisitSection media={media} />
+  {media.length > 0 && <Lightbox />}
+</BaseLayout>

@@ -1,0 +1,57 @@
+---
+import { publicLinks } from '../../data/links';
+import ExternalLink from '../ui/ExternalLink.astro';
+import Icon from '../ui/Icon.astro';
+/** Always-available quick actions. Static HTML and CSS only: no observer decides when it
+ * shows. It never floats over the content: on wide screens it is a slim vertical rail
+ * inside the right page gutter (outside the content column); below that it is an opaque,
+ * full-width bar at the bottom edge, and the page reserves its height (--dock-clearance)
+ * so the last content, the footer and focused controls always end above it. */
+const { booking, whatsapp, instagram } = publicLinks;
+---
+{(booking || whatsapp || instagram) && (
+  <nav class="action-dock" aria-label="Acciones rápidas" data-action-dock>
+    {booking && <ExternalLink href={booking} class="dock-book"><Icon name="diamond" /><span class="dock-book-label">Reservar<span class="dock-book-tail"> cita</span></span></ExternalLink>}
+    {booking && (whatsapp || instagram) && <span class="dock-divider" aria-hidden="true"></span>}
+    {whatsapp && <ExternalLink href={whatsapp} class="dock-icon" aria-label="Escribinos por WhatsApp"><Icon name="whatsapp" /><span class="dock-tip" aria-hidden="true">WhatsApp</span></ExternalLink>}
+    {instagram && <ExternalLink href={instagram} class="dock-icon" aria-label="Instagram de LUXE"><Icon name="instagram" /><span class="dock-tip" aria-hidden="true">Instagram</span></ExternalLink>}
+  </nav>
+)}
+<style>
+  :global(:root) { --dock-height: calc(4rem + env(safe-area-inset-bottom)); --dock-clearance: var(--dock-height); }
+  /* Room for the bar after the footer, and focus/anchor scrolling that stops above it. */
+  :global(body) { padding-bottom: var(--dock-clearance); }
+  :global(html) { scroll-padding-bottom: calc(var(--dock-clearance) + .75rem); }
+
+  /* Bar (phones, tablets, small laptops): attached to the bottom edge, opaque, full width. */
+  .action-dock { position: fixed; z-index: 20; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: .5rem; height: var(--dock-height); padding: .5rem max(.75rem, env(safe-area-inset-right)) calc(.5rem + env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left)); border-top: 1px solid #c5a36a59; background: #0b2a22; box-shadow: 0 -.75rem 2rem #0005; }
+  .dock-book { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: .55rem; height: 100%; min-height: 44px; padding: 0 1.1rem; border-radius: 999px; background: var(--gold); color: var(--ink); font-size: .75rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+  .dock-book:hover { background: var(--ivory); color: var(--ink); }
+  .dock-book :global(.icon) { width: 1.15rem; height: 1.15rem; }
+  .dock-divider { flex: none; width: 1px; height: 1.6rem; margin-inline: .15rem; background: #c5a36a59; }
+  .dock-icon { position: relative; flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; color: var(--ivory); }
+  .dock-icon:hover, .dock-icon:focus-visible { color: var(--gold); }
+  .dock-icon :global(.icon) { width: 1.3rem; height: 1.3rem; }
+  .action-dock :focus-visible { outline-offset: 3px; }
+  .dock-tip { display: none; }
+  @media (min-width: 48rem) {
+    .action-dock { justify-content: center; }
+    .dock-book { flex: 0 1 22rem; }
+  }
+
+  /* Rail (≥ 80rem): vertical, inside the right gutter, which the content column never uses. */
+  @media (min-width: 80rem) {
+    :global(:root) { --dock-clearance: 0px; }
+    .action-dock { left: auto; right: .4rem; bottom: 1.5rem; flex-direction: column; gap: .25rem; width: 3.25rem; height: auto; padding: .3rem; border: 1px solid #c5a36a73; border-radius: 999px; background: #0d3329f5; box-shadow: 0 .75rem 2rem #0007, inset 0 1px 0 #f1eadf14; }
+    .dock-book { flex: none; flex-direction: column; width: 100%; height: auto; padding: 1rem 0; gap: .6rem; }
+    .dock-book-label { writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: .16em; }
+    .dock-divider { width: 1.4rem; height: 1px; margin: .3rem 0; }
+    .dock-icon { width: 44px; height: 44px; }
+    .dock-tip { position: absolute; display: block; right: calc(100% + .7rem); top: 50%; padding: .3rem .6rem; border: 1px solid #c5a36a59; background: var(--ink); color: var(--ivory); font-size: .6875rem; letter-spacing: .06em; white-space: nowrap; opacity: 0; visibility: hidden; transform: translate(.25rem, -50%); pointer-events: none; }
+    .dock-icon:hover .dock-tip, .dock-icon:focus-visible .dock-tip { opacity: 1; visibility: visible; transform: translate(0, -50%); }
+  }
+  @media (max-width: 22.49rem) { .dock-book-tail { display: none; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .dock-book, .dock-tip { transition: background-color 200ms ease, opacity 200ms ease, transform 200ms ease; }
+  }
+</style>

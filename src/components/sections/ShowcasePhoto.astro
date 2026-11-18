@@ -1,0 +1,34 @@
+---
+import { Picture } from 'astro:assets';
+import type { PortfolioItem } from '../../data/portfolio';
+import { lightboxAttributes } from '../ui/lightbox-image';
+interface Props { item: PortfolioItem; order: number }
+const { item, order } = Astro.props;
+const { width, height } = item.image;
+const widths = [...new Set([360, 540, 720, 960].filter((candidate) => candidate < width).concat(Math.min(960, width)))];
+// Original proportions (no crop, no distortion); very narrow or wide originals are bounded.
+// .5 lets the tall Fase 4.3 works (≈ .51) show whole instead of being trimmed by the cover fit.
+const ratio = Math.min(1, Math.max(.5, width / height));
+const zoom = await lightboxAttributes(item.image, item.alt, `${item.categoryLabel} · ${item.caption}`);
+---
+<li class="crown-card" data-orbit-card data-id={item.id} data-category={item.category} data-category-label={item.categoryLabel} data-caption={item.caption} data-tagline={item.tagline} data-title={item.title} data-description={item.description} data-cta={item.ctaLabel} data-order={order} style={`--ratio: ${ratio.toFixed(4)}`} {...zoom}>
+  <figure class="crown-photo">
+    <Picture src={item.image} alt={item.alt} formats={['webp']} fallbackFormat="jpg" widths={widths} sizes="(min-width: 64rem) 30vw, 72vw" quality={80} loading="lazy" decoding="async" draggable="false" style={{ objectPosition: item.objectPosition }} />
+  </figure>
+</li>
+<style>
+  .crown-card { position: absolute; top: 50%; left: 50%; height: var(--crown-h); aspect-ratio: var(--ratio); margin: calc(var(--crown-h) / -2) 0 0 calc(var(--crown-h) * var(--ratio) / -2); list-style: none; will-change: transform, opacity; }
+  .crown-photo { position: relative; width: 100%; height: 100%; margin: 0; background: #0a211b; box-shadow: 0 2rem 3rem -1.75rem #000; }
+  .crown-photo :global(picture), .crown-photo :global(img) { display: block; width: 100%; height: 100%; }
+  .crown-photo :global(img) { object-fit: cover; user-select: none; -webkit-user-drag: none; }
+  /* Depth veil: neighbours recede into the dark; the centre photo stays untouched. */
+  .crown-photo::after { content: ''; position: absolute; inset: 0; background: #070b09; opacity: min(.72, calc((1 - var(--prominence, 1)) * 5)); pointer-events: none; }
+  /* Diamond-inspired corner marks frame only the photo in front. */
+  .crown-card::before, .crown-card::after { content: ''; position: absolute; z-index: 1; width: 1.75rem; height: 1.75rem; opacity: 0; pointer-events: none; }
+  .crown-card::before { top: -.6rem; left: -.6rem; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+  .crown-card::after { right: -.6rem; bottom: -.6rem; border-right: 1px solid var(--gold); border-bottom: 1px solid var(--gold); }
+  .crown-card[data-front]::before, .crown-card[data-front]::after { opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .crown-card::before, .crown-card::after { transition: opacity 300ms ease; }
+  }
+</style>

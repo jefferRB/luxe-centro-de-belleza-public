@@ -1,0 +1,30 @@
+/* Cinematic viewport: on desktop screens with enough height, each main section is composed
+ * as one complete scene inside the visible area. Nothing here fixes a height: sections get a
+ * minimum of one screen, and each component sizes its protagonist (globe, crown, portal,
+ * facade) from the space the screen really has (--scene-avail). Below the gate (phones,
+ * tablets, short windows, 200 % zoom) the page simply flows: no scroll-snap, no inner scroll.
+ *
+ * The gate lives in each component as
+ *   @media (min-width: 64rem) and (min-height: 34rem)
+ * because CSS variables cannot be used in media conditions. */
+:root {
+  /* What one scene may use: the screen minus the bottom action bar where there is one. */
+  --scene-h: calc(100svh - var(--dock-clearance, 0px));
+  /* Breathing room above and below a scene: generous on tall screens, tight on short ones. */
+  --scene-pad: clamp(1.5rem, 5.2svh, 4.25rem);
+  --scene-avail: calc(var(--scene-h) - var(--scene-pad) * 2);
+  /* Display sizes for scene titles: by width and by height, whichever is smaller. */
+  --scene-title: clamp(2.35rem, min(3.9vw, 6.6svh), 4.4rem);
+}
+@media (min-width: 64rem) and (min-height: 34rem) {
+  .scene {
+    min-height: var(--scene-h);
+    padding-block: var(--scene-pad);
+    display: grid;
+    align-content: center;
+    /* A header link lands the scene exactly at the top of the screen. */
+    scroll-margin-top: 0;
+  }
+  .scene .section-heading { margin-bottom: clamp(1.25rem, 3.2svh, 2.5rem); }
+  .scene .section-heading h2 { margin-top: clamp(.6rem, 1.4svh, 1rem); font-size: var(--scene-title); line-height: 1.04; }
+}

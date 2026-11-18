@@ -1,0 +1,117 @@
+---
+import { Picture } from 'astro:assets';
+import type { GlobePanel } from '../../data/globe';
+import { FACETS } from '../../lib/facets';
+import { lightboxAttributes } from '../ui/lightbox-image';
+/** One piece of the Mundo LUXE: placed tangent to the sphere by CSS (--lat/--lon), with a
+ * front face and a back plate. Both hide their backface, so a panel seen from behind shows
+ * the emerald plate, never a mirrored photo. A clip is a piece like any other: its <video>
+ * lives inside the face, so it turns, recedes and returns with the world. */
+interface Props { panel: GlobePanel; specialtyName?: string }
+const { panel, specialtyName } = Astro.props;
+const image = panel.image;
+const isVideo = panel.kind === 'video';
+const widths = image ? [...new Set((isVideo ? [320, 480, 640] : [200, 320, 480]).filter((width) => width < image.width).concat(Math.min(isVideo ? 640 : 480, image.width)))] : [];
+const sizes = isVideo ? '(min-width: 64rem) 15rem, 10rem' : '(min-width: 64rem) 9rem, 6rem';
+const captionText = specialtyName && !isVideo ? `${specialtyName} · ${panel.caption}` : panel.caption;
+const zoom = image && panel.alt ? await lightboxAttributes(panel.zoomImage ?? image, panel.alt, captionText, panel.video) : {};
+const points = (facet: (typeof FACETS)[number]) => facet.points.map(([x, y]) => `${x},${y * 1.25}`).join(' ');
+const style = `--lat: ${panel.point.lat}deg; --lon: ${panel.point.lon}deg; --s: ${panel.size}; --shade: ${panel.shade}`;
+---
+<div class="gp" data-globe-panel data-key={panel.key} data-kind={panel.kind} data-specialty={panel.specialtyId} data-caption={panel.caption} data-label={panel.label || undefined} data-lat={panel.point.lat} data-lon={panel.point.lon} data-filler={panel.filler ? '' : undefined} data-hero={panel.hero ? '' : undefined} style={style} {...zoom}>
+  <div class="gp-face gp-front">
+    {image ? (
+      <>
+        {/* Requested only as the globe approaches (inline loader in ServicesSection); without JS, noscript shows it. */}
+        <template data-globe-photo>
+          <Picture src={image} alt={panel.alt ?? ''} formats={['webp']} fallbackFormat="jpg" widths={widths} sizes={sizes} quality={isVideo ? 78 : 74} loading="lazy" decoding="async" draggable="false" style={{ objectPosition: panel.focus }} />
+          {/* The clip never preloads: the globe's director gives it a source only when it is the one to play. */}
+          {isVideo && <video class="gp-video" data-globe-video data-src={panel.video} muted playsinline loop preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" style={`object-position: ${panel.focus}`}></video>}
+        </template>
+        <noscript><Picture src={image} alt={panel.alt ?? ''} formats={['webp']} fallbackFormat="jpg" widths={widths} sizes={sizes} quality={74} loading="lazy" decoding="async" style={{ objectPosition: panel.focus }} /></noscript>
+        {isVideo && <span class="gp-play" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="M7 5.5v9l7.5-4.5z" fill="currentColor" /></svg></span>}
+      </>
+    ) : panel.kind === 'emblem' ? (
+      <div class="gp-emblem" role="img" aria-label={`${specialtyName}: ${panel.caption}`}>
+        <svg viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          {FACETS.map((facet) => <polygon points={points(facet)} fill={facet.fill} />)}
+          {FACETS.map((facet) => <polygon class="gp-edge" points={points(facet)} />)}
+        </svg>
+        <span aria-hidden="true">{specialtyName}</span>
+      </div>
+    ) : (
+      <svg class="gp-facet" viewBox="0 0 100 80" fill="none" aria-hidden="true" focusable="false"><path d="M20 12H80L96 32 50 72 4 32 20 12ZM4 32H96M20 12 32 32 50 72 68 32 80 12M32 32 50 12 68 32" stroke="currentColor" stroke-width="1.1" /></svg>
+    )}
+  </div>
+  {panel.kind !== 'facet' && (
+    <>
+      {/* The reveal: a gold hairline draws along two sides of the frame, once, when the piece comes forward. */}
+      <span class="gp-trace" aria-hidden="true"><span></span><span></span></span>
+      {panel.label && <span class="gp-label" aria-hidden="true">{panel.label}</span>}
+    </>
+  )}
+  <div class="gp-face gp-back" aria-hidden="true"></div>
+</div>
+<style>
+  /* Size from the globe radius; centred on its point; tangent and upright on the sphere. */
+  .gp { --w: calc(var(--R) * .54 * var(--s)); --h: calc(var(--w) * 1.25); position: absolute; top: 50%; left: 50%; width: var(--w); height: var(--h); margin: calc(var(--h) / -2) 0 0 calc(var(--w) / -2); transform-style: preserve-3d; transform: rotateY(var(--lon)) rotateX(var(--lat)) translateZ(calc(var(--R) + var(--lift, 0px))); cursor: pointer; }
+  /* Clips are vertical: a taller 2:3 frame keeps the gesture of the treatment in view. */
+  .gp[data-kind='video'] { --h: calc(var(--w) * 1.5); }
+  .gp[data-kind='facet'] { --h: var(--w); cursor: default; }
+  .gp-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
+  .gp-front { background: #0a211b; box-shadow: 0 .9rem 1.6rem -.8rem #000c; }
+  .gp-front::after { content: ''; position: absolute; inset: 0; background: #04100c; opacity: var(--shade, 0); pointer-events: none; }
+  .gp-front :global(picture), .gp-front :global(img) { display: block; width: 100%; height: 100%; }
+  .gp-front :global(img) { object-fit: cover; user-select: none; -webkit-user-drag: none; }
+  /* The clip sits on its own poster and only shows once frames are really playing: no black flash. */
+  .gp-front :global(.gp-video) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; pointer-events: none; }
+  .gp-front :global(.gp-video[data-live]) { opacity: 1; }
+  .gp[data-kind='video'] .gp-front { box-shadow: 0 1.4rem 2.4rem -1rem #000e, 0 0 0 1px #c5a36a59; }
+  /* A small diamond-cut play mark says «this one moves»; it fades while the clip plays. */
+  .gp-play { position: absolute; right: 8%; bottom: 6%; z-index: 1; display: grid; place-items: center; width: calc(var(--w) * .16); height: calc(var(--w) * .16); min-width: 1.5rem; min-height: 1.5rem; color: var(--ivory); pointer-events: none; }
+  .gp-play::before { content: ''; position: absolute; inset: 14%; border: 1px solid #e5c891; background: #071a14b3; transform: rotate(45deg); }
+  .gp-play svg { position: relative; width: 46%; height: 46%; }
+  .gp[data-playing] .gp-play { opacity: 0; }
+  /* The plate seen from inside the globe: emerald, dim, with a gold hairline. */
+  .gp-back { transform: rotateY(180deg); background: linear-gradient(160deg, #123f33, #071a14); border: 1px solid #c5a36a33; opacity: .82; }
+  .gp[data-kind='facet'] .gp-front { display: grid; place-items: center; background: linear-gradient(150deg, #165041, #0b2c24 70%); clip-path: polygon(50% 0, 100% 38%, 82% 100%, 18% 100%, 0 38%); box-shadow: none; }
+  .gp-facet { width: 64%; color: #c5a36a; opacity: .7; }
+  .gp[data-kind='facet'] .gp-back { clip-path: polygon(50% 0, 100% 38%, 82% 100%, 18% 100%, 0 38%); border: 0; }
+  .gp-emblem { position: absolute; inset: 0; display: grid; place-items: end center; }
+  .gp-emblem svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .gp-edge { fill: none; stroke: #c5a36a; stroke-opacity: .5; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .gp-emblem span { position: relative; margin-bottom: 12%; padding-inline: .3rem; color: var(--ivory); font: italic 400 calc(var(--w) * .15)/1.1 var(--font-display); text-align: center; text-shadow: 0 2px 10px #000c; }
+
+  /* Gold trace (top edge from the left, then the right edge downwards) and the name beneath:
+   * hidden until the piece is chosen; both turn away with it, like the faces. */
+  .gp-trace, .gp-label { backface-visibility: hidden; -webkit-backface-visibility: hidden; pointer-events: none; }
+  .gp-trace { position: absolute; inset: -5px; opacity: 0; }
+  .gp-trace span { position: absolute; background: #e5c891; }
+  .gp-trace span:first-child { top: 0; left: 0; width: 100%; height: 1px; transform-origin: 0 50%; }
+  .gp-trace span:last-child { top: 0; right: 0; width: 1px; height: 100%; transform-origin: 50% 0; }
+  .gp-label { position: absolute; top: calc(100% + .7rem); left: 50%; padding: .3rem .7rem; border: 1px solid #c5a36a66; background: #071a14e6; color: var(--ivory); font-size: max(.625rem, calc(var(--R) * .042)); letter-spacing: .16em; text-transform: uppercase; white-space: nowrap; opacity: 0; transform: translateX(-50%); }
+
+  @container globe (max-width: 30rem) {
+    .gp-label { top: calc(100% + .45rem); padding: .2rem .5rem; font-size: .5625rem; letter-spacing: .12em; }
+  }
+  /* The chosen piece rises from the surface, framed in gold, and says what it is. */
+  .gp[data-featured] { --lift: calc(var(--R) * .12); }
+  .gp[data-featured] .gp-front { outline: 1px solid #e5c891; outline-offset: 4px; box-shadow: 0 1.8rem 3rem -1.2rem #000, 0 0 2.4rem -.6rem #c5a36a40; }
+  .gp[data-featured] .gp-front::after { opacity: 0; }
+  .gp[data-featured] .gp-trace, .gp[data-featured] .gp-label { opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .gp { transition: transform 450ms cubic-bezier(.22, 1, .36, 1); }
+    .gp-front :global(.gp-video) { transition: opacity 520ms ease; }
+    .gp-play { transition: opacity 400ms ease; }
+    /* The reveal runs once each time a piece is chosen (scripts/specialties.ts restarts
+     * data-reveal then); nothing loops while it stays chosen. */
+    .gp[data-featured][data-reveal] .gp-front { animation: gp-settle 900ms cubic-bezier(.22, 1, .36, 1) var(--reveal-delay, 0ms) both; }
+    .gp[data-featured][data-reveal] .gp-trace span:first-child { animation: gp-draw-x 620ms cubic-bezier(.65, 0, .35, 1) calc(180ms + var(--reveal-delay, 0ms)) both; }
+    .gp[data-featured][data-reveal] .gp-trace span:last-child { animation: gp-draw-y 520ms cubic-bezier(.65, 0, .35, 1) calc(700ms + var(--reveal-delay, 0ms)) both; }
+    .gp[data-featured][data-reveal] .gp-label { animation: gp-label 520ms cubic-bezier(.22, 1, .36, 1) calc(520ms + var(--reveal-delay, 0ms)) both; }
+    @keyframes gp-settle { from { transform: scale(1.035); } to { transform: none; } }
+    @keyframes gp-draw-x { from { transform: scaleX(0); } to { transform: none; } }
+    @keyframes gp-draw-y { from { transform: scaleY(0); } to { transform: none; } }
+    @keyframes gp-label { from { opacity: 0; transform: translate(-50%, -.35rem); } to { opacity: 1; transform: translateX(-50%); } }
+  }
+</style>

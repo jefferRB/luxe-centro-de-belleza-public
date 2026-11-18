@@ -1,0 +1,181 @@
+---
+import { Picture } from 'astro:assets';
+import { luxe, type LuxeConfig } from '../../data/luxe';
+import { publicLinks } from '../../data/links';
+import type { RenderableMedia } from '../../data/media';
+import { FACADE_MEDIA_ID } from '../../data/spaces';
+import ExternalLink from '../ui/ExternalLink.astro';
+import Icon from '../ui/Icon.astro';
+import { lightboxAttributes } from '../ui/lightbox-image';
+import OpeningHours from './OpeningHours.astro';
+interface Props { media: readonly RenderableMedia[] }
+const { media } = Astro.props;
+const { booking, maps, waze, whatsapp, instagram, instagramHandle } = publicLinks;
+// Typed by the contract, not the current values: a pending field needs no component change.
+const { hours, address } = luxe.contact as LuxeConfig['contact'];
+const place = address.status === 'confirmed' ? address.value : undefined;
+const facade = media.find((item) => item.id === FACADE_MEDIA_ID);
+const facadeZoom = facade ? await lightboxAttributes(facade.image, facade.alt, 'LUXE Centro de Belleza · Concepción, La Unión, Cartago') : {};
+const facadeWidths = facade ? [...new Set([480, 800, 1200, 1600].filter((width) => width < facade.image.width).concat(Math.min(1600, facade.image.width)))] : [];
+---
+<section id="ubicacion" class="visit section-space scene on-light" aria-labelledby="ubicacion-title" tabindex="-1">
+  <div class="container"><div class:list={['visit-scene', { 'visit-scene--photo': facade }]}>
+    <header class="visit-heading">
+      <p class="eyebrow">04 / Visitanos</p>
+      <h2 id="ubicacion-title">Te esperamos<br class="visit-break" /> <em>en Concepción.</em></h2>
+      <p class="visit-lede">Barbería y belleza en Concepción de La Unión, Cartago. Encontrá cómo llegar, consultá nuestros horarios y reservá tu próxima visita.</p>
+    </header>
+    <div class:list={['visit-stage', { 'visit-stage--text': !facade }]}>
+      {facade && (
+        <figure class="visit-facade" {...facadeZoom}>
+          <div class="visit-facade-photo">
+            <Picture src={facade.image} alt={facade.alt} formats={['avif', 'webp']} fallbackFormat="jpg" widths={facadeWidths} sizes="(min-width: 64rem) 62vw, 100vw" quality={80} loading="lazy" decoding="async" />
+            <button type="button" class="visit-facade-zoom" data-zoom-trigger hidden><Icon name="expand" /><span>Ampliar fachada</span></button>
+          </div>
+          <figcaption><span class="visit-caption-mark" aria-hidden="true"></span>{facade.caption} · {luxe.location}</figcaption>
+        </figure>
+      )}
+      <div class="visit-panel">
+        <address class="visit-place">
+          <span class="visit-name">LUXE <span>Centro de Belleza</span></span>
+          {place ? (
+            <span class="visit-address"><Icon name="pin" />{place.locality}, {place.canton}<br />{place.province}, {place.country}</span>
+          ) : <span class="visit-address"><Icon name="pin" />{luxe.location}</span>}
+        </address>
+        {hours.status === 'confirmed' ? <OpeningHours schedule={hours.value} tone="dark" /> : <p class="visit-hours-note">Consultá horarios y disponibilidad al reservar.</p>}
+        {booking && (
+          <ExternalLink href={booking} class="visit-book">
+            <span class="visit-book-text"><span class="visit-book-label">Reservar cita</span><span class="visit-book-meta">Agenda en línea · elegí servicio y hora</span></span>
+            <Icon name="arrow-up-right" />
+          </ExternalLink>
+        )}
+        {(waze || maps) && (
+          <div class="visit-block">
+            <p class="visit-block-title">Cómo llegar</p>
+            <div class="visit-routes">
+              {waze && <ExternalLink href={waze} class="visit-route visit-route--main"><Icon name="route" /><span>Cómo llegar con Waze</span></ExternalLink>}
+              {maps && <ExternalLink href={maps} class="visit-route"><Icon name="pin" /><span>Google Maps</span></ExternalLink>}
+            </div>
+          </div>
+        )}
+        {(whatsapp || instagram) && (
+          <div class="visit-block visit-contact">
+            <p class="visit-block-title">Escribinos</p>
+            <ul>
+              {whatsapp && <li><ExternalLink href={whatsapp} class="visit-social"><Icon name="whatsapp" /><span>WhatsApp<small>Consultas y citas</small></span></ExternalLink></li>}
+              {instagram && <li><ExternalLink href={instagram} class="visit-social"><Icon name="instagram" /><span>Instagram<small>@{instagramHandle}</small></span></ExternalLink></li>}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  </div></div>
+</section>
+{facade && <script>import '../../scripts/zoom-trigger';</script>}
+<style>
+  .visit { position: relative; overflow: hidden; scroll-margin-top: 1.5rem; }
+  .visit:focus { outline: none; }
+  .visit-heading { display: grid; gap: 1.1rem; margin-bottom: clamp(2rem, 5cqi, 3.75rem); }
+  .visit-heading h2 { font: 400 clamp(2.75rem, 7cqi, 6.2rem)/1.02 var(--font-display); letter-spacing: -.04em; }
+  .visit-heading h2 em { color: var(--emerald); }
+  .visit-lede { max-width: 31rem; color: #3d4741; font-size: .9375rem; line-height: 1.7; }
+
+  .visit-stage { position: relative; display: grid; }
+  .visit-facade { position: relative; margin: 0 calc(var(--gutter) * -1); }
+  /* The facade keeps its 16:9 original: never cropped, so both LUXE signs stay whole. */
+  .visit-facade-photo { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #0a211b; }
+  .visit-facade-photo::after { content: ''; position: absolute; inset: .75rem; border: 1px solid #c5a36a66; pointer-events: none; }
+  .visit-facade :global(picture), .visit-facade :global(img) { display: block; width: 100%; height: 100%; }
+  .visit-facade :global(img) { object-fit: cover; }
+  .visit-facade-zoom { position: absolute; bottom: 1.25rem; left: 1.25rem; z-index: 1; display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: .4rem .9rem; border: 1px solid #c5a36a80; background: #101211d9; color: var(--ivory); font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; }
+  .visit-facade-zoom :global(.icon) { width: 1rem; height: 1rem; color: var(--gold); }
+  .visit-facade-zoom:hover { background: var(--ink); color: var(--gold); }
+  figcaption { display: flex; align-items: center; gap: .6rem; padding: .85rem var(--gutter) 0; color: #3d4741; font-size: .75rem; letter-spacing: .06em; }
+  .visit-caption-mark { width: 1.75rem; height: 1px; background: var(--emerald); }
+
+  /* The emerald panel: the place, the hours, then actions by priority. */
+  .visit-panel { position: relative; z-index: 1; container-type: inline-size; display: grid; gap: 1.5rem; margin-top: 1.5rem; padding: clamp(1.5rem, 4cqi, 2.5rem); background: linear-gradient(160deg, #134a3c, #0b2a22 70%); color: var(--ivory); box-shadow: 0 2.5rem 4rem -2rem #0a211bb3; }
+  .visit-panel::before { content: ''; position: absolute; inset: .6rem; border: 1px solid #c5a36a26; pointer-events: none; }
+  .visit-place { display: grid; gap: .6rem; font-style: normal; }
+  .visit-name { font: 400 clamp(1.9rem, 3.4cqi, 2.6rem)/1.05 var(--font-display); letter-spacing: .02em; }
+  .visit-name span { display: block; margin-top: .3rem; color: var(--gold); font: 600 .6875rem/1.4 var(--font-body); letter-spacing: .26em; text-transform: uppercase; }
+  .visit-address { display: grid; grid-template-columns: auto 1fr; column-gap: .6rem; color: #d3d8cf; font-size: .9375rem; line-height: 1.55; }
+  .visit-address :global(.icon) { grid-row: span 2; width: 1.15rem; height: 1.15rem; margin-top: .2rem; color: var(--gold); }
+  .visit-hours-note { color: #d3d8cf; font-size: .875rem; }
+
+  .visit-book { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 72px; padding: 1rem 1.25rem; background: var(--gold); color: var(--ink); text-decoration: none; }
+  .visit-book-text { display: grid; gap: .15rem; }
+  .visit-book-label { font: 400 1.6rem/1.1 var(--font-display); }
+  .visit-book-meta { font-size: .6875rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .visit-book :global(.icon) { width: 1.5rem; height: 1.5rem; }
+  .visit-book:hover { background: var(--ivory); color: var(--ink); }
+  .visit-book:focus-visible { outline: 2px solid var(--ivory); outline-offset: 3px; }
+
+  .visit-block { display: grid; gap: .7rem; }
+  .visit-block-title { color: var(--gold); font-size: .6875rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+  .visit-routes { display: grid; gap: .6rem; }
+  .visit-route { display: flex; align-items: center; gap: .7rem; min-height: 52px; padding: .65rem 1rem; border: 1px solid #c5a36a66; color: var(--ivory); font-size: .9375rem; text-decoration: none; }
+  .visit-route :global(.icon) { width: 1.2rem; height: 1.2rem; color: var(--gold); }
+  .visit-route--main { border-color: var(--gold); background: #c5a36a14; }
+  .visit-route:hover { border-color: var(--ivory); color: var(--ivory); background: #f1eadf12; }
+  .visit-contact ul { display: grid; gap: .25rem; margin: 0; padding: 0; list-style: none; border-top: 1px solid #c5a36a26; }
+  .visit-social { display: flex; align-items: center; gap: .8rem; min-height: 52px; padding-block: .4rem; border-bottom: 1px solid #c5a36a26; color: var(--ivory); text-decoration: none; }
+  .visit-social :global(.icon) { width: 1.25rem; height: 1.25rem; color: var(--gold); }
+  .visit-social span { display: grid; font-size: .9375rem; }
+  .visit-social small { color: #b7beb4; font-size: .75rem; }
+  .visit-social:hover { color: var(--gold); }
+  .visit-panel :global(:focus-visible) { outline-color: var(--gold); }
+
+  /* Inside the panel: side by side only when the panel itself is wide enough. */
+  @container (min-width: 25rem) {
+    .visit-routes { grid-template-columns: 1.25fr 1fr; }
+    .visit-contact ul { grid-template-columns: 1fr 1fr; column-gap: 1.25rem; }
+  }
+  @container (min-width: 48rem) {
+    .visit-heading { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: end; column-gap: 3rem; }
+    .visit-heading .eyebrow, .visit-heading h2 { grid-column: 1; }
+    .visit-lede { grid-column: 2; grid-row: 2; justify-self: end; padding-bottom: .5rem; }
+    .visit-facade { margin-inline: 0; }
+    figcaption { padding-inline: 0; }
+    .visit-panel { width: min(100%, 34rem); margin: -5rem 0 0 auto; }
+  }
+  /* Wide: photo and panel as one composition; the panel overlaps the night facade. */
+  @container (min-width: 64rem) {
+    .visit-stage { grid-template-columns: minmax(0, 1fr) minmax(0, 29rem); align-items: center; }
+    /* A slight overlap (the right sign ends at ~93% of the photo width: it stays whole). */
+    .visit-facade { grid-column: 1 / 2; grid-row: 1; margin-right: -1.75rem; }
+    .visit-panel { grid-column: 2; grid-row: 1; width: auto; margin: 3rem 0; }
+  }
+  .visit-stage--text .visit-panel { width: min(100%, 40rem); margin: 0; }
+  /* Desktop scene: heading and facade on the left, the visit panel standing beside them, so
+   * place, hours, booking and routes are read together with the photo. */
+  @container (min-width: 64rem) {
+    .visit-scene--photo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, clamp(27.5rem, 36cqi, 29rem)); grid-template-rows: auto auto; align-items: center; }
+    .visit-scene--photo .visit-heading { grid-column: 1; grid-row: 1; grid-template-columns: 1fr; gap: clamp(.6rem, 1.8svh, 1.1rem); margin-bottom: clamp(1.25rem, 3.4svh, 2.5rem); padding-right: clamp(1.5rem, 3cqi, 3rem); }
+    .visit-scene--photo :is(.visit-heading .eyebrow, .visit-heading h2, .visit-lede) { grid-column: 1; grid-row: auto; justify-self: start; padding-bottom: 0; }
+    .visit-scene--photo .visit-stage { display: contents; }
+    .visit-facade { grid-column: 1; grid-row: 2; align-self: start; }
+    .visit-scene--photo .visit-panel { grid-column: 2; grid-row: 1 / span 2; align-self: center; position: relative; width: auto; margin: 0 0 0 -1rem; }
+    /* Without an approved facade photo: the invitation and the panel as a two-part split. */
+    .visit-scene:not(.visit-scene--photo) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 34rem); align-items: center; column-gap: clamp(2rem, 5cqi, 5rem); }
+    .visit-scene:not(.visit-scene--photo) .visit-heading { grid-template-columns: 1fr; margin-bottom: 0; }
+    .visit-scene:not(.visit-scene--photo) :is(.visit-heading .eyebrow, .visit-heading h2, .visit-lede) { grid-column: 1; grid-row: auto; justify-self: start; padding-bottom: 0; }
+    .visit-stage--text .visit-panel { width: 100%; }
+  }
+  @media (min-width: 64rem) and (min-height: 34rem) {
+    .visit { scroll-margin-top: 0; }
+    .visit-break { display: none; }
+    .visit-lede { max-width: 38rem; }
+    /* Short screens: the facade narrows (never crops) so heading, photo and caption fit. */
+    .visit-facade { max-width: calc((var(--scene-avail) - 11.5rem) * 16 / 9); }
+    .visit-heading h2 { font-size: clamp(2.35rem, min(3.6cqi, 6.4svh), 4.4rem); line-height: 1.04; }
+    .visit-panel { gap: clamp(.8rem, 2.1svh, 1.5rem); padding: clamp(1.15rem, 3.4svh, 2.5rem); }
+    .visit-book { min-height: 60px; padding-block: .7rem; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .visit-book, .visit-route, .visit-social { transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease; }
+    .visit-book :global(.icon), .visit-route :global(.icon) { transition: transform 260ms cubic-bezier(.22, 1, .36, 1); }
+    .visit-book:hover :global(.icon) { transform: translate(3px, -3px); }
+    .visit-route:hover :global(.icon) { transform: translateX(3px); }
+  }
+</style>

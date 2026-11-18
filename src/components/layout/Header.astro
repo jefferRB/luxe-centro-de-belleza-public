@@ -1,0 +1,37 @@
+---
+import { publicLinks } from '../../data/links';
+import BrandName from '../ui/BrandName.astro';
+import ExternalLink from '../ui/ExternalLink.astro';
+import Icon from '../ui/Icon.astro';
+interface Props { brand: { name: string; descriptor: string } }
+const { brand } = Astro.props;
+---
+<header>
+ <div class="container header-inner">
+  <a class="identity" href="/" aria-label={`${brand.name} — Inicio`} data-intro-reveal><BrandName {...brand} /></a>
+  <nav aria-label="Navegación principal"><a href="#servicios">Servicios</a><a href="#trabajos">Trabajos</a><a href="#espacio">El espacio</a><a href="#ubicacion">Ubicación <span aria-hidden="true">↗</span></a></nav>
+  {publicLinks.booking && <ExternalLink href={publicLinks.booking} class="header-cta">Reservar<span class="cta-tail">&nbsp;cita</span> <Icon name="arrow-up-right" /></ExternalLink>}
+ </div>
+</header>
+<style>
+  header { background: var(--deep); border-bottom: 1px solid #c5a36a33; padding-top: env(safe-area-inset-top); }
+  .header-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .5rem 1rem; padding-block: .8rem; }
+  .identity { min-width: 0; text-decoration: none; }
+  nav { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .25rem .75rem; }
+  nav a { display: flex; gap: .7rem; align-items: center; min-height: 44px; text-decoration: none; font-size: .75rem; }
+  nav span { color: var(--color-accent); }
+  .header-cta { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: .5rem .85rem; border: 1px solid #c5a36a99; color: var(--ivory); font-size: .6875rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+  .header-cta { grid-row: 1; grid-column: 2; }
+  .header-cta :global(.icon) { width: 1rem; height: 1rem; color: var(--gold); }
+  /* 320px phones: brand and CTA share one row; "Reservar" keeps the label in the name. */
+  @media (max-width: 22.49rem) { .cta-tail { display: none; } .header-cta { padding-inline: .7rem; } }
+  .header-cta:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .header-cta:hover :global(.icon) { color: var(--ink); }
+  @media (min-width: 48rem) {
+    .header-inner { grid-template-columns: auto 1fr auto; gap: .25rem 2rem; padding-block: 1.2rem; }
+    nav { grid-column: auto; justify-content: flex-end; gap: .25rem 1.5rem; }
+    .header-cta { grid-column: 3; }
+    nav a { font-size: var(--text-small); }
+    .header-cta { padding-inline: 1.1rem; font-size: .75rem; }
+  }
+</style>

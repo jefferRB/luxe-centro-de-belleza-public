@@ -1,0 +1,11 @@
+.section-space > .container { container-type: inline-size; }
+.section-space { padding-block: clamp(3.5rem, 8vw, 8rem); scroll-margin-top: 1.5rem; }
+.section-heading { display: grid; gap: 1.5rem; margin-bottom: clamp(2.5rem, 5vw, 4.5rem); }
+.section-heading h2 { margin-top: 1.25rem; font: 400 clamp(2.75rem, 7cqi, 6.2rem)/1.02 var(--font-display); letter-spacing: -.04em; }
+.section-heading h2 em { font-weight: 400; color: var(--gold); }
+.section-intro { max-width: 23rem; font-size: .875rem; }
+.section-note { max-width: 52rem; margin-top: 2.5rem; font-size: .75rem; line-height: 1.7; opacity: .85; }
+@container (min-width: 42rem) {
+  .section-heading { grid-template-columns: 1.65fr 1fr; align-items: end; gap: 3rem; }
+  .section-intro { justify-self: end; padding-bottom: .4rem; }
+}

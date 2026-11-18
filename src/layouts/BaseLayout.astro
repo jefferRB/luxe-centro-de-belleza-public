@@ -1,0 +1,77 @@
+---
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import ActionDock from '../components/layout/ActionDock.astro';
+import ScissorsIntro from '../components/hero/ScissorsIntro.astro';
+import { luxe } from '../data/luxe';
+import { publicLinks } from '../data/links';
+import { services } from '../data/services';
+import { buildLocalBusiness, buildWebSite } from '../data/structured-data';
+import '../styles/global.css';
+import '../styles/ui.css';
+interface Props {
+  /** Path of this page on the canonical domain. */
+  path?: string;
+  /** Social preview (up to 1200×630), already sized by the asset pipeline. */
+  ogImage?: { readonly src: string; readonly width: number; readonly height: number; readonly alt: string };
+}
+const { path = '/', ogImage } = Astro.props;
+const origin = luxe.canonicalOrigin.status === 'confirmed' ? luxe.canonicalOrigin.value : undefined;
+const canonical = origin ? new URL(path, origin).href : undefined;
+const image = ogImage && origin ? { ...ogImage, url: new URL(ogImage.src, origin).href } : undefined;
+const { title, description } = luxe.metadata;
+const social = luxe.social;
+const structuredData = JSON.stringify(buildLocalBusiness(luxe, publicLinks, services, { url: canonical, image: image?.url }));
+const siteData = canonical && path === '/' ? JSON.stringify(buildWebSite(luxe, canonical)) : undefined;
+---
+<!doctype html>
+<html lang="es-CR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#101211" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {/* Square PNG, a multiple of 48 px, for Google's search-result favicon. */}
+    <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CR" />
+    <meta property="og:site_name" content="LUXE Centro de Belleza" />
+    <meta property="og:title" content={social.title} />
+    <meta property="og:description" content={social.description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {image && (
+      <>
+        <meta property="og:image" content={image.url} />
+        <meta property="og:image:secure_url" content={image.url} />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content={String(image.width)} />
+        <meta property="og:image:height" content={String(image.height)} />
+        <meta property="og:image:alt" content={image.alt} />
+      </>
+    )}
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={social.title} />
+    <meta name="twitter:description" content={social.description} />
+    {image && <meta name="twitter:image" content={image.url} />}
+    {image && <meta name="twitter:image:alt" content={image.alt} />}
+    <script type="application/ld+json" set:html={structuredData} />
+    {siteData && <script type="application/ld+json" set:html={siteData} />}
+  </head>
+  <body>
+    <ScissorsIntro />
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <Header brand={luxe.brand} />
+    <main id="contenido" tabindex="-1"><slot /></main>
+    <Footer {...luxe.brand} location={luxe.location} />
+    <ActionDock />
+    <p id="new-tab-hint" hidden>Se abre en una pestaña nueva.</p>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "name": "luxe-centro-de-belleza",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Website and photo admin for LUXE Centro de Belleza, a beauty studio in Costa Rica (Astro + TypeScript).",
+  "license": "MIT",
+  "author": "Jefferson Rojas Brizuela (https://github.com/jefferRB)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jefferRB/luxe-centro-de-belleza.git"
+  },
+  "engines": {
+    "node": ">=24.7.0"
+  },
+  "scripts": {
+    "dev": "astro dev --background",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test:e2e": "playwright test",
+    "postbuild": "node --experimental-strip-types scripts/verify-build.ts",
+    "start": "node dist/server/entry.mjs",
+    "admin:password": "node --experimental-strip-types scripts/admin-password.ts",
+    "demo-media": "node --experimental-strip-types scripts/generate-demo-media.ts",
+    "favicons": "node --experimental-strip-types scripts/generate-favicons.ts",
+    "og-image": "node --experimental-strip-types scripts/generate-og-image.ts",
+    "showcase": "node --experimental-strip-types scripts/capture-showcase.ts",
+    "site:publish": "node --experimental-strip-types scripts/publish-site.ts"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.13",
+    "astro": "^7.4.12",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.5",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,31 @@
+---
+import { scheduleSummary, type WeeklySchedule } from '../../lib/opening-hours';
+/** Discreet live opening line for the hero, fed by the same schedule and clock as the
+ * location panel. The static HTML carries an always-true neutral summary, replaced in the
+ * browser by «Abierto ahora · Hasta las 7:00 p. m.» or «Cerrado ahora · Abrimos …». */
+interface Props { schedule: WeeklySchedule }
+const { schedule } = Astro.props;
+const [days = '', hours = ''] = (scheduleSummary(schedule)[0] ?? '').split(': ');
+---
+<luxe-open-now class="open-now" data-schedule={JSON.stringify(schedule)}>
+  <span class="open-dot" aria-hidden="true"></span>
+  <span class="open-state" data-open-state>{days}</span>
+  <span class="open-sep" aria-hidden="true">·</span>
+  <span class="open-detail" data-open-detail>{hours}</span>
+</luxe-open-now>
+<script>import '../../scripts/opening-hours';</script>
+<style>
+  .open-now { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .15rem .55rem; min-height: 2rem; padding: .3rem .85rem .3rem .7rem; border: 1px solid #c5a36a4d; border-radius: 999px; background: #0a211bb3; color: var(--ivory); font-size: .8125rem; line-height: 1.4; }
+  .open-dot { position: relative; flex: none; width: .5rem; height: .5rem; border: 1px solid var(--gold); border-radius: 50%; }
+  .open-state { font-weight: 600; letter-spacing: .02em; }
+  .open-sep { color: #c5a36a99; }
+  .open-detail { color: #d3d8cf; }
+  /* Computed in the browser: emerald light when open, warm amber when closed. */
+  .open-now[data-open='true'] .open-dot { border-color: #74d6a8; background: #74d6a8; box-shadow: 0 0 0 3px #74d6a826; }
+  .open-now[data-open='false'] .open-dot { border-color: #d9a066; background: #d9a066; }
+  .open-now[data-open='true'] .open-state { color: #b9efd5; }
+  @media (prefers-reduced-motion: no-preference) {
+    .open-now[data-open='true'] .open-dot::after { content: ''; position: absolute; inset: -4px; border: 1px solid #74d6a8; border-radius: 50%; opacity: 0; animation: open-pulse 2.8s ease-out infinite; }
+    @keyframes open-pulse { 0% { transform: scale(.6); opacity: .7; } 70%, 100% { transform: scale(1.6); opacity: 0; } }
+  }
+</style>

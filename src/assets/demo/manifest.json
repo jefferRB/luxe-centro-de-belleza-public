@@ -1,0 +1,162 @@
+{
+  "generator": "scripts/generate-demo-media.ts",
+  "provenance": "Procedurally generated vector illustrations. No photography, client imagery, logos or third-party material.",
+  "files": {
+    "globe/barba-trabajo-globo.webp": {
+      "sha256": "c105b8a92de81a3a07ad087fa6f4118f12800e80c6a9d5902aef0e359e4d1965",
+      "bytes": 12870
+    },
+    "globe/corte-fade-perfil-globo.webp": {
+      "sha256": "c496167fc5bbb85d42beaf9bf60ed77188c43bc7abfef826deca0b75a5981b6d",
+      "bytes": 14954
+    },
+    "globe/peluqueria-liso-globo.webp": {
+      "sha256": "3b0ac9ea62ad8ba710480ff499a0ed748c390f536852f27307b6bbd33b336daf",
+      "bytes": 18142
+    },
+    "globe/peluqueria-rubio-ondas-globo.webp": {
+      "sha256": "321826d080611e0ce9c93548253bfeda3313bb61d46b7f3c101c7e11ec8bc7f6",
+      "bytes": 19390
+    },
+    "globe/unas-borgona-globo.webp": {
+      "sha256": "f4545c4ef57025ae10b13218b9933cbaf18b716ba7c968e5811dd71850da7a4c",
+      "bytes": 11332
+    },
+    "hero/recepcion.webp": {
+      "sha256": "a517a291060fcfe32a15fce9faefff93bb2408d2c293ecd4c0a16259776b410c",
+      "bytes": 21494
+    },
+    "posters/limpieza-facial.webp": {
+      "sha256": "7c8367e46ea7384ee355cf98ad1c87f8f5d37ed6e055d10b4f43b85b11c1bfaa",
+      "bytes": 12008
+    },
+    "posters/ritual-toallas-calidas.webp": {
+      "sha256": "5f6ce6036aea49a261adc9771b39996ebdb31a2bbb81b3429681cbc6bfeb2b56",
+      "bytes": 12758
+    },
+    "spaces/barberia-perspectiva.webp": {
+      "sha256": "a415379decb12f604b5e6213bbfe7465ac1cd4cdf23b46524f2d399ae11088f8",
+      "bytes": 28236
+    },
+    "spaces/espera.webp": {
+      "sha256": "1644a9c825106cd28c6f7a63260a909706010376edfb039bd1538a7b7a1084eb",
+      "bytes": 18030
+    },
+    "spaces/estaciones.webp": {
+      "sha256": "10c829d74b62cef6392d4f4c945108954e8cf8a8c5fda7a220365abc6990a4ad",
+      "bytes": 32312
+    },
+    "spaces/fachada.webp": {
+      "sha256": "b848d4b0f4ba3fe78571a03beeea7a2ec00467a633c6b5c1adcfab1d118fd462",
+      "bytes": 18760
+    },
+    "spaces/manicura.webp": {
+      "sha256": "67bd1f8e4f6ecf97ff2807e1e2f1fd74728ae8436786ac5925ab43ebe74e608f",
+      "bytes": 15774
+    },
+    "spaces/salon.webp": {
+      "sha256": "871795303575225cc6edef531970a99ebb18a2a2e595d74fec1586fe8d913eb8",
+      "bytes": 22766
+    },
+    "videos/limpieza-facial.webm": {
+      "sha256": "c2e01196f485ee9a1d8da02bc6642c2817e20d1900f0bd168e3fbdf2a3fb0d80",
+      "bytes": 31257
+    },
+    "videos/ritual-toallas-calidas.webm": {
+      "sha256": "579d6abaf9bfb11552a9e424a648d53c753196d7cc49c0bd253484518e786115",
+      "bytes": 80060
+    },
+    "works/barba-trabajo.webp": {
+      "sha256": "64c6c59ecf52b3e0e1bc8b9a6af2a28ba1a8e5d0c08577548ecdb08d60e240dd",
+      "bytes": 24788
+    },
+    "works/barberia-perfil-barba.webp": {
+      "sha256": "7cb430356b4eac5d8f9b032f252cd599b0dd1b6959e952ca9f09b02b43103abe",
+      "bytes": 25464
+    },
+    "works/cejas-definidas.webp": {
+      "sha256": "6c41c89f72803bdf1c26b82fd97ac7daa1c608b5e41e49ac6e2e5ea1d20cacd7",
+      "bytes": 25134
+    },
+    "works/corte-barba.webp": {
+      "sha256": "7039d26da968442950f91bec26bdaf0b02202e9cf04b2e274e6d03a685e6a642",
+      "bytes": 17540
+    },
+    "works/corte-fade-perfil.webp": {
+      "sha256": "6af320adf7cc96df245625db70ab9ce57f0ce149cea2f68440ff86e13e26cbf6",
+      "bytes": 28852
+    },
+    "works/corte-linea.webp": {
+      "sha256": "3d8912e5422111f89b4e8572a9ef2d4fcbb320cc78aef786c3146e4216757a0e",
+      "bytes": 26030
+    },
+    "works/corte-peinado.webp": {
+      "sha256": "3de8136c25de3386ec8910b91618a6c19d78b60548808fdb36c94e32201809a1",
+      "bytes": 31444
+    },
+    "works/corte-rizado.webp": {
+      "sha256": "9abc9b446e0780ce83f29d2165092379e68696239983a853de3f2444c6bb8bb7",
+      "bytes": 23474
+    },
+    "works/corte-textura.webp": {
+      "sha256": "114f0db9eff53311575c19b33160c7616fd5c29674ad1261b6d0aae6c7cc1301",
+      "bytes": 41576
+    },
+    "works/facial-aparatologia.webp": {
+      "sha256": "00e3d6f737f199b30eb1412eadd6fbe4c48d81fabb15f6f7d811144e223dab6b",
+      "bytes": 11408
+    },
+    "works/facial-proceso.webp": {
+      "sha256": "239f3f344e72f15973b5c3003a27949e4fa445549cfd7361c52ba43509369c63",
+      "bytes": 23228
+    },
+    "works/peluqueria-liso.webp": {
+      "sha256": "4f0b6c10e478ac8e6d7fef53898cb1d0bcee7bd51203c3b607c88a110fd8d75b",
+      "bytes": 35898
+    },
+    "works/peluqueria-rubio-ondas.webp": {
+      "sha256": "b665bb093f513c64db162b7477c63877e78e03711c9956f9c6b57e66ba42cdcc",
+      "bytes": 39978
+    },
+    "works/peluqueria-rubio-texturizado.webp": {
+      "sha256": "4907310270aa22d6b9bca8e819a5877ced92d86dcdb465ac41febdb97e67a7d9",
+      "bytes": 26008
+    },
+    "works/unas-azul-animal-print.webp": {
+      "sha256": "e62e367a4ea2a5af92b3948b14a61098f03528c3154b91f451718f153a8e3585",
+      "bytes": 27184
+    },
+    "works/unas-azul.webp": {
+      "sha256": "c7a76d63208491239653303514613d43dd33a7432c94c6619beec777a31b5db0",
+      "bytes": 26614
+    },
+    "works/unas-borgona.webp": {
+      "sha256": "17e9aba69b7f555f149e2cb98465db402d74e5fc0bab319ffe02d6327eb86b53",
+      "bytes": 20930
+    },
+    "works/unas-dorado-puntos.webp": {
+      "sha256": "94ea7c1b2c7168e5490a9416382a9bd1d9f287da7cefa0b87813f89c8662ef7a",
+      "bytes": 16262
+    },
+    "works/unas-flores.webp": {
+      "sha256": "80ba5367085936aeda05b7be9aab25cffe865c1b5c605f1d9aa1244d6fc8640a",
+      "bytes": 15186
+    },
+    "works/unas-francesa-flores.webp": {
+      "sha256": "0fe6f15146e1e1c093ac8a34f253e32232bd3160d65673718cf68d84cef2746d",
+      "bytes": 23324
+    },
+    "works/unas-grafico.webp": {
+      "sha256": "4e741efb709e855a58f229365b2224533401cc6029384ea1ca96d5320d28883b",
+      "bytes": 25448
+    },
+    "works/unas-rosa.webp": {
+      "sha256": "9a73b87aae00078b1cad4cf49434e17afd83e40f5167c6b32f6c49f1f1c37a2c",
+      "bytes": 16382
+    },
+    "works/unas-vino-animal-print.webp": {
+      "sha256": "be881210fe0c56ee83552798c227e765cef5e79ca0a0b3f4d90fb8a07e7f0665",
+      "bytes": 25752
+    }
+  }
+}

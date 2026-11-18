@@ -1,0 +1,8 @@
+---
+import { Picture } from 'astro:assets';
+import type { RenderableMedia } from '../../data/media';
+interface Props { media: RenderableMedia; sizes?: string }
+const { media, sizes = '(min-width: 768px) 40vw, 90vw' } = Astro.props;
+const widths = [...new Set([320, 480, 720, 1086].filter((width) => width < media.image.width).concat(Math.min(1086, media.image.width)))];
+---
+<Picture style={{ objectPosition: media.objectPosition ?? "50% 50%" }} src={media.image} alt={media.alt} formats={['webp']} fallbackFormat="jpg" widths={widths} sizes={sizes} quality={78} loading="lazy" decoding="async" />

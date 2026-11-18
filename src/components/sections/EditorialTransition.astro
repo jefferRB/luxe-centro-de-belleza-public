@@ -1,0 +1,28 @@
+<!-- A slim editorial ribbon between the hero and the specialties: same message, a fraction of the height. -->
+<div class="editorial-transition">
+  <div class="container transition-inner">
+    <span class="transition-line" aria-hidden="true"></span>
+    <p class="transition-statement"><span class="eyebrow">Lo que hacemos</span> Cinco especialidades, <em>un mismo cuidado.</em></p>
+    <svg class="transition-mark" viewBox="0 0 100 80" fill="none" aria-hidden="true" focusable="false"><path d="M20 12H80L96 32 50 72 4 32 20 12ZM4 32H96M20 12 32 32 50 72 68 32 80 12M32 32 50 12 68 32" stroke="currentColor" stroke-width="1.6" /></svg>
+    <span class="transition-line" aria-hidden="true"></span>
+  </div>
+</div>
+<style>
+  .editorial-transition { background: var(--ink); border-block: 1px solid #c5a36a26; padding-block: clamp(1.1rem, 2.4vw, 1.6rem); }
+  .transition-inner { display: grid; grid-template-columns: minmax(1rem, 1fr) auto auto minmax(1rem, 1fr); align-items: center; gap: clamp(.75rem, 2vw, 1.5rem); }
+  .transition-line { height: 1px; background: linear-gradient(90deg, transparent, #c5a36a80); transform-origin: right; }
+  .transition-line:last-child { background: linear-gradient(90deg, #c5a36a80, transparent); transform-origin: left; }
+  .transition-statement { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: .2rem .55rem; font: 400 clamp(1.3rem, 2.4vw, 2rem)/1.2 var(--font-display); letter-spacing: -.01em; text-align: center; }
+  .eyebrow { flex-basis: 100%; font: 400 .625rem/1.6 var(--font-body); letter-spacing: .22em; }
+  em { color: var(--gold); font-weight: 400; }
+  .transition-mark { width: 1.6rem; color: var(--gold); }
+  @media (min-width: 48rem) {
+    .eyebrow { flex-basis: auto; margin-right: .6rem; }
+  }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .transition-line { animation: line-grow linear both; animation-timeline: view(); animation-range: entry 0% cover 35%; }
+      @keyframes line-grow { from { transform: scaleX(.2); opacity: .3; } to { transform: scaleX(1); opacity: 1; } }
+    }
+  }
+</style>

@@ -1,0 +1,46 @@
+{
+  "generator": "scripts/capture-showcase.ts",
+  "source": "Local demo build (dist/client) with the generated demonstration media; never the production site.",
+  "files": {
+    "cover.webp": {
+      "sha256": "67d74c471d19623abe606ac22a58190f3c27ef7d6e552d451cad81c473a6baa7",
+      "bytes": 60704
+    },
+    "gallery.webp": {
+      "sha256": "d890f96379ea55f7e9238e2bcd5b4ca8c047ebf276a0eae4cb34f0a172a0af57",
+      "bytes": 51998
+    },
+    "globe-drag.webp": {
+      "sha256": "16f5d453a425426edf7e95c6c5f1bdd3b5b14f20601f8d6e1c6b11e2f03a89d7",
+      "bytes": 262084
+    },
+    "globe.webp": {
+      "sha256": "0100f445ce4ae0be14ba78711745bf2857ee65c284e58bf47858b828313f4215",
+      "bytes": 57412
+    },
+    "hero-desktop.webp": {
+      "sha256": "f95e2ea657918658bdf14048a771db39d6c0c69b2064c6bad8cb2ca17f10df4a",
+      "bytes": 43326
+    },
+    "hero-mobile.webp": {
+      "sha256": "a6e6b980c8bd4ede9c73e0631b603c3099be9b42768a7a4c989ce9ac202671fa",
+      "bytes": 33156
+    },
+    "responsive-mobile.webp": {
+      "sha256": "d6b5659e9e5b803fa0924dd369d7b0abf56a8fc14c62a94b7859c41d93ff6478",
+      "bytes": 68574
+    },
+    "space-3d.webp": {
+      "sha256": "24ea8d9242d44b04f935f14a664b1827bc9f35f7a02ff4cbeb78271e97a4404d",
+      "bytes": 55000
+    },
+    "space-orbit.webp": {
+      "sha256": "ba8476c5b3bb6d2d356e96d4e5b53040289764bd5cb3da0b8cc3b3652e7b9032",
+      "bytes": 73506
+    },
+    "space.webp": {
+      "sha256": "76d4cc4c17ddaea44ba7bb6313d27494669293f707d81f1f3c59df800a2a2293",
+      "bytes": 50810
+    }
+  }
+}

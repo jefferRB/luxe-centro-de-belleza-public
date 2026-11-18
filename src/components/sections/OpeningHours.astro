@@ -1,0 +1,90 @@
+---
+import { scheduleRows, scheduleSummary, type WeeklySchedule } from '../../lib/opening-hours';
+import Icon from '../ui/Icon.astro';
+/** Expandable weekly schedule. The static HTML lists the confirmed hours; the live
+ * "Abierto/Cerrado ahora" state is computed in the browser in Costa Rica time. */
+interface Props { schedule: WeeklySchedule; tone?: 'light' | 'dark' }
+const { schedule, tone = 'light' } = Astro.props;
+const rows = scheduleRows(schedule);
+const [summary, ...rest] = scheduleSummary(schedule);
+---
+<luxe-hours class:list={['hours', `hours--${tone}`]} data-schedule={JSON.stringify(schedule)}>
+  <details class="hours-panel" data-hours-panel>
+    <summary class="hours-summary">
+      <span class="hours-icon" aria-hidden="true"><Icon name="clock" /></span>
+      <span class="hours-text">
+        <span class="hours-label">Horario</span>
+        <span class="hours-state" data-hours-state>{summary}</span>
+        <span class="hours-detail" data-hours-detail>{rest.join(' · ')}</span>
+      </span>
+      <span class="hours-more">Horario completo</span>
+      <span class="hours-toggle" aria-hidden="true"><Icon name="chevron-down" /></span>
+    </summary>
+    <table class="hours-table">
+      <caption class="sr-only">Horario semanal de LUXE, hora de Costa Rica</caption>
+      <tbody>
+        {rows.map((row) => (
+          <tr data-day={row.day} data-closed={row.open ? undefined : ''}>
+            <th scope="row">{row.label}<span class="sr-only" data-today-note hidden> (hoy)</span></th>
+            <td>{row.hours}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p class="hours-zone">Hora de Costa Rica.</p>
+  </details>
+</luxe-hours>
+<script>import '../../scripts/opening-hours';</script>
+<style>
+  .hours { display: block; }
+  .hours-panel { border: 1px solid #103d3233; background: #fbf8f2; box-shadow: 0 1.5rem 2.5rem -2rem #0a211b66; }
+  .hours-summary { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 1rem; min-height: 72px; padding: 1rem 1.1rem; cursor: pointer; list-style: none; }
+  .hours-summary::-webkit-details-marker { display: none; }
+  .hours-summary:focus-visible { outline-offset: -4px; }
+  .hours-icon { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; background: #103d3214; color: var(--emerald); }
+  .hours-icon :global(.icon) { width: 1.3rem; height: 1.3rem; }
+  .hours-text { display: grid; gap: .1rem; min-width: 0; }
+  .hours-label { color: #3d4741; font-size: .6875rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+  .hours-state { display: inline-flex; align-items: center; gap: .5rem; color: var(--ink); font-weight: 600; font-size: .9375rem; }
+  luxe-hours[data-open='true'] .hours-state { color: var(--emerald); }
+  luxe-hours[data-open='false'] .hours-state { color: #7a2e1f; }
+  luxe-hours[data-open] .hours-state::before { content: ''; flex: none; width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; }
+  .hours-detail { color: #3d4741; font-size: .875rem; }
+  .hours-toggle { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 1px solid #103d3233; border-radius: 50%; color: var(--emerald); }
+  .hours-toggle :global(.icon) { width: 1rem; height: 1rem; }
+  .hours-panel[open] .hours-toggle :global(.icon) { transform: rotate(180deg); }
+  .hours-table { width: 100%; border-collapse: collapse; border-top: 1px solid #103d321f; font-size: .875rem; }
+  .hours-table th, .hours-table td { padding: .6rem 1.1rem; text-align: left; font-weight: 400; color: #3d4741; }
+  .hours-table td { text-align: right; font-variant-numeric: tabular-nums; }
+  .hours-table tr + tr { border-top: 1px solid #103d3214; }
+  .hours-table tr[data-closed] td { color: #6b6f68; }
+  .hours-table tr[data-today] { background: #103d320f; }
+  .hours-table tr[data-today] th, .hours-table tr[data-today] td { color: var(--ink); font-weight: 600; }
+  .hours-table tr[data-today] th { box-shadow: inset 2px 0 0 var(--emerald); }
+  .hours-zone { padding: .5rem 1.1rem .9rem; color: #5b625c; font-size: .75rem; }
+  .hours-more { color: #3d4741; font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+  .hours-panel[open] .hours-more { visibility: hidden; }
+  @media (max-width: 26rem) { .hours-more { display: none; } .hours-summary { grid-template-columns: auto minmax(0, 1fr) auto; } }
+  /* In a narrow column (the «Visitanos» panel) the chevron alone says "more". */
+  @container (max-width: 30rem) { .hours-more { display: none; } .hours-summary { grid-template-columns: auto minmax(0, 1fr) auto; } }
+  /* On the emerald panel of «Visitanos»: same component, ivory and gold on deep green. */
+  .hours--dark .hours-panel { border-color: #c5a36a40; background: #0b2a22; box-shadow: none; }
+  .hours--dark .hours-icon { background: #c5a36a1f; color: var(--gold); }
+  .hours--dark .hours-label, .hours--dark .hours-detail, .hours--dark .hours-more { color: #c9d0c6; }
+  .hours--dark .hours-state { color: var(--ivory); }
+  .hours--dark[data-open='true'] .hours-state { color: #8fe0b8; }
+  .hours--dark[data-open='false'] .hours-state { color: #f0b98a; }
+  .hours--dark .hours-toggle { border-color: #c5a36a59; color: var(--gold); }
+  .hours--dark .hours-table { border-top-color: #c5a36a26; }
+  .hours--dark .hours-table th, .hours--dark .hours-table td { color: #c9d0c6; }
+  .hours--dark .hours-table tr + tr { border-top-color: #c5a36a1a; }
+  .hours--dark .hours-table tr[data-closed] td { color: #9aa39b; }
+  .hours--dark .hours-table tr[data-today] { background: #c5a36a14; }
+  .hours--dark .hours-table tr[data-today] th, .hours--dark .hours-table tr[data-today] td { color: var(--ivory); }
+  .hours--dark .hours-table tr[data-today] th { box-shadow: inset 2px 0 0 var(--gold); }
+  .hours--dark .hours-zone { color: #9aa39b; }
+  .hours--dark .hours-summary:focus-visible { outline-color: var(--gold); }
+  @media (prefers-reduced-motion: no-preference) {
+    .hours-toggle :global(.icon) { transition: transform 250ms ease; }
+  }
+</style>

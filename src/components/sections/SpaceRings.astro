@@ -1,0 +1,58 @@
+---
+/** The rings of Saturn of «El espacio», drawn by the camera (scripts/space-scene.ts): two
+ * screen-space layers, the far half of each ring behind the portal and the near half in
+ * front of it, so the orbit really passes around the portal. Hidden until the camera runs;
+ * without it, the static ring of SpaceCrown stays. Hairlines keep their width at any angle. */
+const layers = ['back', 'front'] as const;
+---
+{layers.map((layer) => (
+  <svg class={`tour-rings tour-rings-${layer}`} data-tour-rings={layer} aria-hidden="true" focusable="false" data-off>
+    <defs>
+      {/* From the sides (where the ring crosses the portal plane) to its nearest or farthest point. */}
+      <linearGradient id={`tour-depth-${layer}`} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1">
+        {layer === 'front'
+          ? <><stop offset="0" stop-color="#c5a36a" stop-opacity=".5" /><stop offset="1" stop-color="#e6cf9f" stop-opacity=".95" /></>
+          : <><stop offset="0" stop-color="#c5a36a" stop-opacity=".46" /><stop offset="1" stop-color="#c5a36a" stop-opacity=".16" /></>}
+      </linearGradient>
+    </defs>
+    <path class="tour-ring-outer" data-ring="outer" />
+    <path class="tour-ring-halo" data-ring="halo" />
+    <path class="tour-ring-main" data-ring="main" pathLength="1" />
+    <path class="tour-ring-inner" data-ring="inner" />
+    {layer === 'front' && <path class="tour-rings-glint" data-ring="glint" pathLength="100" />}
+  </svg>
+))}
+<style>
+  /* Container px: the paths are written in the orbit's own coordinates (no viewBox). */
+  .tour-rings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; transform: translate(calc(var(--px, 0) * 3px), calc(var(--py, 0) * 2px)); }
+  .tour-rings[data-off] { display: none; }
+  /* Interleaved with the portal (20) and the cards (11–19 behind, 31+ in front). */
+  .tour-rings-back { z-index: 10; }
+  .tour-rings-front { z-index: 30; }
+  .tour-ring-main { stroke-width: 1.15px; }
+  .tour-rings-back .tour-ring-main { stroke: url(#tour-depth-back); stroke-width: 1px; }
+  .tour-rings-front .tour-ring-main { stroke: url(#tour-depth-front); }
+  .tour-ring-halo { stroke: #c5a36a; stroke-width: 7px; }
+  .tour-rings-back .tour-ring-halo { stroke-opacity: .045; }
+  .tour-rings-front .tour-ring-halo { stroke-opacity: .08; }
+  .tour-ring-outer { stroke: #c5a36a; stroke-width: .75px; }
+  .tour-rings-back .tour-ring-outer { stroke-opacity: .14; }
+  .tour-rings-front .tour-ring-outer { stroke-opacity: .26; }
+  .tour-ring-inner { stroke: #c5a36a; stroke-width: .75px; stroke-dasharray: 1 5; }
+  .tour-rings-back .tour-ring-inner { stroke-opacity: .09; }
+  .tour-rings-front .tour-ring-inner { stroke-opacity: .16; }
+  /* The reflection travelling the ring (gradient defined with the static ring). */
+  .tour-rings-glint { stroke: url(#tour-ring-glint); stroke-width: 1.6px; stroke-dasharray: 7 93; stroke-dashoffset: -38; opacity: .85; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(luxe-space-tour[data-ambient]) .tour-rings-glint { animation: tour-glint 64s linear infinite; }
+    :global(luxe-space-tour[data-ambient]:not([data-inview])) .tour-rings-glint { animation-play-state: paused; }
+    @keyframes tour-glint { from { stroke-dashoffset: -38; } to { stroke-dashoffset: -138; } }
+    /* Entrance: the rings draw themselves once (space-tour.ts). */
+    :global(luxe-space-tour[data-reveal='pending']) .tour-rings { visibility: hidden; }
+    :global(luxe-space-tour[data-reveal='pending']) .tour-ring-main { stroke-dasharray: 1; stroke-dashoffset: 1; }
+    :global(luxe-space-tour[data-reveal='run']) .tour-rings { animation: tour-crown-in 900ms 120ms cubic-bezier(.22, 1, .36, 1) both; }
+    :global(luxe-space-tour[data-reveal='run']) .tour-ring-main { stroke-dasharray: 1; animation: tour-ring-draw 1500ms 80ms cubic-bezier(.65, 0, .35, 1) both; }
+    @keyframes tour-crown-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes tour-ring-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  }
+</style>

@@ -1,0 +1,27 @@
+# systemd unit example for the photo admin (Astro + Node). Generic paths: adapt before use.
+# Install as /etc/systemd/system/luxe-admin.service
+[Unit]
+Description=LUXE photo admin (Astro + Node)
+After=network.target
+
+[Service]
+Type=simple
+User=app
+Group=app
+WorkingDirectory=/srv/app
+# LUXE_ADMIN_USER, LUXE_ADMIN_PASSWORD_HASH, LUXE_MEDIA_DIR, LUXE_SITE_DIR, LUXE_PROJECT_ROOT
+EnvironmentFile=/etc/app/admin.env
+# Loopback only: nginx is the single public entry point.
+Environment=NODE_ENV=production HOST=127.0.0.1 PORT=4322
+ExecStart=/usr/bin/node dist/server/entry.mjs
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+# The admin writes photos and published releases; publishing builds inside the project.
+ReadWritePaths=/var/lib/app /srv/app
+
+[Install]
+WantedBy=multi-user.target

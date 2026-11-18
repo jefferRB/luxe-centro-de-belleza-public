@@ -1,0 +1,99 @@
+---
+import { luxe, type LuxeConfig } from '../../data/luxe';
+import { previewsUnapprovedMedia, usesDemoMedia } from '../../data/media';
+import { publicLinks } from '../../data/links';
+import { scheduleSummary } from '../../lib/opening-hours';
+import ExternalLink from '../ui/ExternalLink.astro';
+import Icon from '../ui/Icon.astro';
+/** The brand's closing: a statement and the booking call first, then three aligned columns
+ * (explore, visit, contact) and a quiet base line. Only confirmed data and links. */
+interface Props { name: string; descriptor: string; location: string }
+const { name, descriptor, location } = Astro.props;
+const { hours, address } = luxe.contact as LuxeConfig['contact'];
+const sections = [['#servicios', 'Especialidades'], ['#trabajos', 'Trabajos'], ['#espacio', 'El espacio'], ['#ubicacion', 'Ubicación y horario']] as const;
+const place = address.status === 'confirmed' ? `${address.value.locality}, ${address.value.canton}, ${address.value.province}` : location;
+const schedule = hours.status === 'confirmed' ? scheduleSummary(hours.value) : [];
+const contact = [
+  publicLinks.whatsapp && ['WhatsApp', publicLinks.whatsapp, 'whatsapp'],
+  publicLinks.instagram && ['Instagram', publicLinks.instagram, 'instagram'],
+].filter((entry): entry is [string, string, 'whatsapp' | 'instagram'] => Boolean(entry));
+const routes = [
+  publicLinks.waze && ['Cómo llegar con Waze', publicLinks.waze],
+  publicLinks.maps && ['Google Maps', publicLinks.maps],
+].filter((entry): entry is [string, string] => Boolean(entry));
+---
+<footer class="site-footer">
+  <span class="footer-gem" aria-hidden="true"><Icon name="diamond" /></span>
+  <div class="container footer-closing">
+    <div class="footer-signature">
+      <p class="footer-name">{name}<span>.</span></p>
+      <p class="footer-descriptor">{descriptor}</p>
+    </div>
+    <div class="footer-call">
+      <p class="footer-line">{luxe.introduction.title} <em>{luxe.introduction.accent}</em></p>
+      {publicLinks.booking && <ExternalLink href={publicLinks.booking} class="button footer-book">Reservar cita <Icon name="arrow-up-right" /></ExternalLink>}
+    </div>
+  </div>
+  <div class="container footer-grid">
+    <nav aria-label="Secciones del sitio">
+      <p class="footer-title">Explorar</p>
+      <ul>{sections.map(([href, label]) => <li><a class="footer-link" href={href}>{label}</a></li>)}</ul>
+    </nav>
+    <div>
+      <p class="footer-title">Visitanos</p>
+      <address class="footer-address">LUXE Centro de Belleza<br />{place}</address>
+      {schedule.length > 0 && <ul class="footer-hours">{schedule.map((line) => <li>{line}</li>)}</ul>}
+      {routes.length > 0 && <ul>{routes.map(([label, href]) => <li><ExternalLink href={href} class="footer-link">{label} <Icon name="arrow-up-right" /></ExternalLink></li>)}</ul>}
+    </div>
+    {contact.length > 0 && (
+      <div>
+        <p class="footer-title">Contacto</p>
+        <ul>{contact.map(([label, href, icon]) => <li><ExternalLink href={href} class="footer-link"><Icon name={icon} />{label}</ExternalLink></li>)}</ul>
+      </div>
+    )}
+  </div>
+  <div class="container footer-base">
+    <p>{name} Centro de Belleza · {location}</p>
+    <a class="footer-link" href="#contenido">Volver arriba <Icon name="arrow-up" /></a>
+  </div>
+  {usesDemoMedia() && <p class="preview-note container" data-demo-media>Imágenes ilustrativas de demostración: no son fotografías del centro ni de trabajos reales.</p>}
+  {previewsUnapprovedMedia() && <p class="preview-note container">Vista local · Fotografía y marca pendientes de autorización para publicación.</p>}
+</footer>
+<style>
+  .site-footer { position: relative; padding-top: clamp(3.5rem, 8vw, 6.5rem); background: radial-gradient(80% 60% at 50% 0%, #0f3a2f 0%, var(--ink) 70%); border-top: 1px solid #c5a36a4d; }
+  /* A small diamond sits on the dividing line: the page closes on the LUXE mark. */
+  .footer-gem { position: absolute; top: 0; left: 50%; display: grid; place-items: center; width: 3rem; height: 3rem; border: 1px solid #c5a36a66; border-radius: 50%; background: var(--ink); color: var(--gold); transform: translate(-50%, -50%); }
+  .footer-gem :global(.icon) { width: 1.3rem; height: 1.3rem; }
+
+  .footer-closing { display: grid; gap: 2rem; padding-bottom: clamp(2.5rem, 6vw, 4rem); border-bottom: 1px solid #c5a36a33; }
+  .footer-name { font: 400 clamp(4.5rem, 16vw, 9.5rem)/.85 var(--font-display); letter-spacing: .06em; }
+  .footer-name span { color: var(--gold); }
+  .footer-descriptor { margin-top: .9rem; color: var(--gold); font-size: .75rem; letter-spacing: .32em; text-transform: uppercase; }
+  .footer-call { display: grid; gap: 1.25rem; align-content: end; justify-items: start; }
+  .footer-line { max-width: 22rem; font: 400 clamp(1.4rem, 2.4vw, 1.9rem)/1.25 var(--font-display); }
+  .footer-line em { display: block; color: var(--gold); }
+
+  .footer-grid { display: grid; gap: 2.25rem; padding-block: clamp(2.5rem, 5vw, 3.5rem); }
+  .footer-title { margin-bottom: .9rem; color: var(--gold); font-size: .6875rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  .footer-link { display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; color: var(--ivory); font-size: .9375rem; text-decoration: none; background: linear-gradient(var(--gold), var(--gold)) 0 calc(100% - .55rem) / 0 1px no-repeat; }
+  .footer-link :global(.icon) { width: 1rem; height: 1rem; color: var(--gold); }
+  .footer-link:hover { color: var(--ivory); background-size: 100% 1px; }
+  .footer-address { color: #d3d8cf; font-size: .9375rem; font-style: normal; line-height: 1.6; }
+  .footer-hours { margin: .6rem 0 .4rem; color: var(--color-muted); font-size: .8125rem; line-height: 1.7; }
+
+  .footer-base { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem 2rem; padding-block: 1rem 1.5rem; border-top: 1px solid #c5a36a26; color: var(--color-muted); font-size: .75rem; }
+  .footer-base .footer-link { font-size: .75rem; }
+  .preview-note { padding-bottom: 1rem; color: var(--color-muted); font-size: .6875rem; }
+
+  @media (min-width: 48rem) {
+    .footer-closing { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: end; }
+    .footer-call { justify-items: end; text-align: right; }
+    .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 3rem; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .footer-link { transition: background-size 320ms cubic-bezier(.22, 1, .36, 1), color 200ms ease; }
+    .footer-link :global(.icon) { transition: transform 260ms cubic-bezier(.22, 1, .36, 1); }
+    .footer-link:hover :global(.icon) { transform: translate(2px, -2px); }
+  }
+</style>

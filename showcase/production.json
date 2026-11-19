@@ -1,0 +1,55 @@
+{
+  "description": "Screenshots and recordings of the production site used in the README. They show the business's photographs, logo and client work, which belong to LUXE Centro de Belleza and the people depicted. They are NOT covered by the MIT License.",
+  "authorization": {
+    "status": "pending",
+    "grantedBy": "",
+    "scope": "Publication of the files listed below in this public GitHub repository and its documentation",
+    "evidence": "",
+    "reviewedAt": "",
+    "note": "Set status to \"approved\" only with written permission from the business (and, for identifiable clients, their consent). Until then showcase/production/ stays git-ignored and `npm run verify:publication` fails."
+  },
+  "files": {
+    "gallery.webp": {
+      "sha256": "0b194181b78dbfb5e2edbe97f8743c2f13cc6ffaf4132cd93fdca1015a5d8b5b",
+      "bytes": 81952,
+      "source": "Screenshot of www.luxecentrobelleza.com supplied by the author (2026-11-18)",
+      "shows": "Works crown with client work photographs (a client's face is visible)"
+    },
+    "globe-drag.webp": {
+      "sha256": "6e7922d58a079267c8b330078c4ca0265f9a7eee686635d418e6b5482cd74727",
+      "bytes": 987622,
+      "source": "Frames 1.0–8.0 s of the author's screen recording of the production site (2026-11-18), cropped to the globe; 12 fps",
+      "shows": "The globe at rest with a clip playing, a free drag, inertia and the settle on «Barbería y barba»; client work photographs"
+    },
+    "globe-recording.webm": {
+      "sha256": "9b439efe0fc12287870d39090a39680259f8659340fc163f42fc6ed50f5e3b75",
+      "bytes": 1768349,
+      "source": "Seconds 1.0–12.5 of the author's screen recording of the production site (2026-11-18), cropped to the globe; 24 fps, silent",
+      "shows": "Free rotation, inertia, settling and choosing «Barbería y barba» and «Peluquería»; client work photographs"
+    },
+    "globe.webp": {
+      "sha256": "12a2566e9fd9e5e3eabd4031a21423300d590abeb0bfdebb1b368f21337d25ca",
+      "bytes": 93168,
+      "source": "Screenshot of www.luxecentrobelleza.com supplied by the author (2026-11-18)",
+      "shows": "Services section with the globe of client work photographs and a facial-care clip"
+    },
+    "hero-desktop.webp": {
+      "sha256": "6046c26ae8838b0aa2f84cced622a3f6a0c0039d7e60466b7a735a6d949fe261",
+      "bytes": 141410,
+      "source": "Screenshot of www.luxecentrobelleza.com supplied by the author (2026-11-18)",
+      "shows": "Hero: the LUXE wordmark, booking calls and the reception photograph with the logo"
+    },
+    "space.webp": {
+      "sha256": "423a2d6196bd6ffc81c8c5ccbcf9ec6c9a0f6ec8269ad9b1fb61ebfa306a09a2",
+      "bytes": 98328,
+      "source": "Screenshot of www.luxecentrobelleza.com supplied by the author (2026-11-18)",
+      "shows": "Orbital space tour with photographs of the premises and the logo"
+    },
+    "visit.webp": {
+      "sha256": "93d20202c66fbd0ff592add50c23e5421ca4eb432b59da25422d3a377d748c50",
+      "bytes": 156216,
+      "source": "Screenshot of www.luxecentrobelleza.com supplied by the author (2026-11-18)",
+      "shows": "Visit section with the night facade photograph, signage with the logo, hours and contact links"
+    }
+  }
+}

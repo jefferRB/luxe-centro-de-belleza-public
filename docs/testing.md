@@ -6,10 +6,11 @@
 | `npm test` | Unit tests with `node:test` (`tests/*.test.ts`) |
 | `npm run build` | Static site and admin server; `postbuild` runs `scripts/verify-build.ts` |
 | `npm run test:e2e` | Playwright (`tests/e2e/`) against `astro dev` on `http://localhost:4321` |
+| `npm run verify:publication` | Repository gate: every image referenced by the docs exists, and production screenshots are published only with recorded authorization ([media-policy.md](media-policy.md#readme-images)) |
 
-The CI workflow ([`.github/workflows/verify.yml`](../.github/workflows/verify.yml)) runs all four on
-Node 24. At the time of writing the suites pass locally (225 unit tests, 137 end-to-end tests
-including the opt-in admin specs); the workflow has not yet run on GitHub.
+The CI workflow ([`.github/workflows/verify.yml`](../.github/workflows/verify.yml)) runs all of
+them on Node 24. At the time of writing the suites pass locally (226 unit tests, 137 end-to-end
+tests including the opt-in admin specs); the workflow has not yet run on GitHub.
 
 ## What each suite protects
 

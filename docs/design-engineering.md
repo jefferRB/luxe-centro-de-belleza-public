@@ -11,10 +11,11 @@ Rationale that is not recorded in the project documents or the code is marked *t
 
 ## From the studio to tokens
 
-<p align="center">
-  <img src="../showcase/hero-desktop.webp" alt="The hero of the demo build on desktop: «Bienvenidos a LUXE.», the LUXE wordmark with a gold dot, «Tu estilo. Tu momento. Tu espacio.», the booking button, the live open-now status and an illustrated reception." width="74%">
-  <img src="../showcase/hero-mobile.webp" alt="The same hero on a phone: the illustrated reception on top, the headline and wordmark below, and the booking bar fixed at the bottom." width="22%">
-</p>
+<p align="center"><img src="../showcase/production/hero-desktop.webp" alt="The hero in production: «Bienvenidos a LUXE.», the wordmark with a gold dot, «Tu estilo. Tu momento. Tu espacio.», the booking button, the live open-now status and the photograph of the reception with the diamond logo, green walls and warm light strips." width="100%"></p>
+<p align="center"><sub>Production site.</sub></p>
+
+<p align="center"><img src="../showcase/responsive-mobile.webp" alt="Demo build on a phone: the services globe, the works crown and the orbital space tour stacked for a narrow screen, with the booking bar fixed at the bottom." width="80%"></p>
+<p align="center"><sub>Phone layouts from the demo build (illustrated media); no production phone captures yet.</sub></p>
 
 The brief's art direction, *The Emerald Atelier*, came from the studio's own photos: deep green
 walls, black panels, organic and geometric mirrors, warm light, black chairs, marble and metal

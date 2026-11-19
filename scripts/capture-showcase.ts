@@ -109,33 +109,11 @@ try {
   const desktop = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1, locale: 'es-CR', reducedMotion: 'no-preference' });
   await open(desktop, origin);
   await pause(1200);
+  // The README presents the production site (showcase/production/); the demo captures below
+  // only document what a clone shows, and the space views that have no production recording.
   const hero = await desktop.screenshot();
-  await still(hero, 'hero-desktop.webp', 1440);
-
-  await scene(desktop, 'servicios', 2600);
-  await still(await desktop.screenshot(), 'globe.webp', 1440);
-
-  // Globe loop: a slow diagonal drag, then the inertia and the settle.
-  const stage = (await desktop.locator('[data-globe-stage]').boundingBox())!;
-  const clip = { x: stage.x, y: Math.max(0, stage.y), width: stage.width, height: Math.min(900 - Math.max(0, stage.y), stage.height) };
-  const cx = stage.x + stage.width / 2;
-  const cy = stage.y + stage.height / 2;
-  const globeFrames: Buffer[] = [];
-  await desktop.mouse.move(cx + 120, cy - 40);
-  await desktop.mouse.down();
-  for (let step = 1; step <= 22; step++) {
-    await desktop.mouse.move(cx + 120 - step * 13, cy - 40 + step * 4);
-    globeFrames.push(await desktop.screenshot({ clip }));
-  }
-  await desktop.mouse.up();
-  for (let step = 0; step < 22; step++) { await pause(60); globeFrames.push(await desktop.screenshot({ clip })); }
-  await loop(globeFrames, 'globe-drag.webp', 640, 70);
-
-  await scene(desktop, 'trabajos', 2400);
-  await still(await desktop.screenshot(), 'gallery.webp', 1440);
 
   await scene(desktop, 'espacio', 2600);
-  await still(await desktop.screenshot(), 'space.webp', 1440);
 
   // Orbital loop: the crown turns to the next views, the portal follows.
   const orbit = (await desktop.locator('[data-tour-orbit]').boundingBox())!;
@@ -167,7 +145,6 @@ try {
   await open(mobile, origin);
   await pause(1200);
   const heroMobile = await mobile.screenshot();
-  await still(heroMobile, 'hero-mobile.webp', 520);
   const strip: Buffer[] = [];
   for (const id of ['servicios', 'trabajos', 'espacio']) { await scene(mobile, id, 2200); strip.push(await sharp(await mobile.screenshot()).resize({ width: 390 }).png().toBuffer()); }
   const responsive = await sharp(strip, { join: { across: 3, shim: 24, background: '#0a211b' } }).png().toBuffer();

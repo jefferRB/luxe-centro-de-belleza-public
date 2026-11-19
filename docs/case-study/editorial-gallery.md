@@ -1,10 +1,11 @@
 # Case study: the editorial portfolio
 
-<p align="center"><img src="../../showcase/gallery.webp" alt="The works section of the demo build: category tabs with counts, the current illustrated work in the centre of a 3D crown, and its title, description, counter, booking button and «Ver en grande» button." width="100%"></p>
+<p align="center"><img src="../../showcase/production/gallery.webp" alt="The works section in production: category tabs with counts, a haircut photograph large in the centre of the 3D crown with nail work curving away on both sides, and its title, description, counter, booking button and «Ver en grande» button." width="100%"></p>
+<p align="center"><sub>Production site.</sub></p>
 
-Section 02, *«El resultado habla por sí solo.»*, presents the studio's work. In production it
-shows 23 photographs across five categories; this repository shows illustrations in the same
-slots.
+Section 02, *«El resultado habla por sí solo.»*, presents the studio's work: 23 photographs
+across five categories in production. A clone of this repository shows generated illustrations
+in the same slots, with the same proportions.
 
 ## Goals
 

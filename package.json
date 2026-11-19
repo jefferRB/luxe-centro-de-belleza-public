@@ -28,7 +28,8 @@
     "favicons": "node --experimental-strip-types scripts/generate-favicons.ts",
     "og-image": "node --experimental-strip-types scripts/generate-og-image.ts",
     "showcase": "node --experimental-strip-types scripts/capture-showcase.ts",
-    "site:publish": "node --experimental-strip-types scripts/publish-site.ts"
+    "site:publish": "node --experimental-strip-types scripts/publish-site.ts",
+    "verify:publication": "node --experimental-strip-types scripts/verify-publication.ts"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.13",

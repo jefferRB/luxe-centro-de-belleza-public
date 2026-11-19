@@ -1,44 +1,40 @@
 <h1 align="center">LUXE Centro de Belleza</h1>
 
-<p align="center"><em>A custom website and photo admin for a beauty studio in Costa Rica</em></p>
+<p align="center"><strong>Custom-Built Digital Experience</strong></p>
 
 <p align="center">
-  <a href="https://www.luxecentrobelleza.com"><strong>Live site</strong></a> ·
-  <a href="docs/case-study/interactive-globe.md">Case studies</a> ·
-  <a href="docs/architecture.md">Architecture</a> ·
-  <a href="#run-it-locally">Run it locally</a>
+  A website and photo admin designed and engineered from scratch for a real beauty studio in
+  Concepción, La Unión, Cartago, Costa Rica. No template: the identity, the interactions and the
+  architecture were built for this business.
 </p>
 
 <p align="center">
-  <img src="showcase/cover.webp" alt="The LUXE home page from the public demo build on desktop, with the mobile layout in front: emerald and gold palette, the «Bienvenidos a LUXE.» headline and the booking button. The hero image is a generated illustration of a reception desk, not a photograph." width="100%">
+  <img src="showcase/production/hero-desktop.webp" alt="The LUXE home page in production: «Bienvenidos a LUXE.» in a large serif with a gold dot, «Tu estilo. Tu momento. Tu espacio.», the booking button and the live open-now status, next to a photograph of the studio's reception with its diamond logo." width="100%">
 </p>
 
 <p align="center">
-  <sub>Astro 7 · TypeScript (strict) · CSS 3D + quaternion math · Node admin · Playwright</sub>
+  <a href="https://www.luxecentrobelleza.com"><strong>luxecentrobelleza.com</strong></a> ·
+  <a href="docs/case-study/interactive-globe.md">Globe</a> ·
+  <a href="docs/case-study/editorial-gallery.md">Gallery</a> ·
+  <a href="docs/case-study/orbital-experience.md">Orbital space</a> ·
+  <a href="docs/architecture.md">Architecture</a>
 </p>
 
-LUXE is a beauty studio in Concepción, La Unión, Cartago. Its website had to feel like the
-place itself, explain five specialities, show real work, show the rooms, and send visitors to
-the studio's existing booking system. Later in the project the business also needed to change
-its photos without a developer.
-
-This repository is the public-source version of that production site. The interface, the
-interactive pieces and the admin are the real implementation; the media are not.
+<p align="center"><sub>Astro 7 · TypeScript (strict) · CSS 3D with quaternion and camera math · Node admin · Playwright</sub></p>
 
 > [!NOTE]
-> **Demonstration media.** The studio's photographs, videos and logo are not in this
-> repository. Every image and clip here is a generated illustration labelled `DEMO`, with the
-> same ids, categories and aspect ratios as the originals, so every interaction behaves as in
-> production. All screenshots below come from that local demo build. The live site at
-> [luxecentrobelleza.com](https://www.luxecentrobelleza.com) shows the real photography.
+> The screenshots and recordings in this README show the **production site**. Its photographs,
+> logo and client work belong to LUXE Centro de Belleza and to the people pictured; they are not
+> covered by this repository's license and are not part of the code. A clone of this repository
+> runs the same interface with generated demonstration media instead ([details](#run-it-locally)).
 
 ---
 
 ## Contents
 
-1. [The challenge](#the-challenge)
+1. [The business need](#the-business-need)
 2. [Discovery and requirements](#discovery-and-requirements)
-3. [Visual identity](#visual-identity)
+3. [Identity and how the ideas evolved](#identity-and-how-the-ideas-evolved)
 4. [The world of LUXE: a CSS 3D globe](#the-world-of-luxe-a-css-3d-globe)
 5. [Editorial portfolio](#editorial-portfolio)
 6. [The space: an orbit inspired by Saturn's rings](#the-space-an-orbit-inspired-by-saturns-rings)
@@ -51,7 +47,7 @@ interactive pieces and the admin are the real implementation; the media are not.
 
 ---
 
-## The challenge
+## The business need
 
 The project brief describes the goal as giving someone who finds LUXE on Google the feeling of
 walking into a refined, warm and trustworthy studio, then letting them see real services, get
@@ -66,17 +62,19 @@ to know the space, find the place and book quickly.
 - Booking through the studio's existing appointment platform (Drago), without rebuilding it.
 - Location, opening hours and contact channels that are confirmed, never guessed.
 
+<p align="center"><img src="showcase/production/visit.webp" alt="The visit section in production: «Te esperamos en Concepción.», a night photograph of the studio's facade with its illuminated signs, and a card with the address, a live «Abierto ahora» status, the booking button, Waze and Google Maps routes, WhatsApp and Instagram." width="100%"></p>
+
+The visit section shows how those requirements end up on screen: the facade at night, the
+address at locality level only, a live open/closed status computed in Costa Rica time, the
+booking call, Waze first with Google Maps as an alternative, and the two confirmed contact
+channels.
+
 **Added as the project evolved**
 
 - A private admin so the business can replace, reorder, retire and add photos. The first
   specification left an admin panel out of scope; it was added later, together with the
   publishing pipeline that keeps the public site static.
   <sub>*Reason for the change: to be confirmed by the author.*</sub>
-
-**Design objectives visible in the implementation**
-
-- Interactions that feel specific to LUXE (a globe, an editorial crown, an orbit around a portal)
-  rather than a template carousel, while every piece of content stays reachable without them.
 
 ## Discovery and requirements
 
@@ -107,44 +105,39 @@ The brief also records the first architecture decisions: a prerendered Astro sit
 React SPA, WordPress or a server application next to the booking platform, and links to the
 booking platform rather than an API integration in the first version.
 
-## Visual identity
-
-<p align="center"><img src="showcase/responsive-mobile.webp" alt="Three phone screenshots from the demo build: «Un mundo de belleza, en un solo lugar.» with the globe, «El resultado habla por sí solo.» with the works crown, and «Hay lugares que se visitan. Otros que se viven.» with the orbital space tour." width="88%"></p>
+## Identity and how the ideas evolved
 
 The art direction in the brief was called *The Emerald Atelier*: editorial, warm and
 contemporary. Not a rough industrial barbershop, not a generic pink-and-white salon, not
 excessive gold. The palette was sampled from the studio's own walls and fittings and lives in
-[`src/styles/tokens.css`](src/styles/tokens.css):
+[`src/styles/tokens.css`](src/styles/tokens.css): emerald `#103d32`, deep green `#0a211b`, ink
+`#101211`, gold `#c5a36a` for lines and calls to action, ivory `#f1eadf` for type on dark
+surfaces. The diamond from the logo returns as a drawn motif (the portal's arrows, the
+footer gem, the play mark on videos) rather than as a copied image, and headlines use an
+editorial serif. Each section opens with a line that sets its mood: *«Tu estilo. Tu momento. Tu
+espacio.»*, *«Un mundo de belleza, en un solo lugar.»*, *«El resultado habla por sí solo.»*,
+*«Hay lugares que se visitan. Otros que se viven.»*
 
-| Token | Value | Role |
+The interactive pieces did not start in their final form. The project's phase notes record
+the changes:
+
+| Piece | Earlier version | Final version |
 |---|---|---|
-| `--emerald` | `#103d32` | Brand sections, the globe and the space |
-| `--deep` | `#0a211b` | Overlays and depth |
-| `--ink` | `#101211` | Hero, navigation, works |
-| `--gold` | `#c5a36a` | Lines, accents and calls to action, never small body text |
-| `--ivory` | `#f1eadf` | Type on dark surfaces and light sections |
-
-The diamond from the logo becomes a drawn motif rather than an image: the diamond-cut arrows set
-into the portal frame, the gem on the footer's dividing line, the play mark on globe videos and
-the ribbon between the hero and the specialities ([`Icon.astro`](src/components/ui/Icon.astro),
-[`EditorialTransition.astro`](src/components/sections/EditorialTransition.astro)). Headlines use
-an editorial serif (`Bodoni MT`, `Didot`) and body text a neutral sans; both are system fonts,
-so no web font is downloaded.
-
-The interface copy is Spanish and written for Costa Rica. Each section opens with an editorial
-line that also sets its mood: *«Tu estilo. Tu momento. Tu espacio.»*, *«Un mundo de belleza, en
-un solo lugar.»*, *«El resultado habla por sí solo.»* and *«Hay lugares que se visitan. Otros que
-se viven.»*
+| Services globe | Two Euler angles (yaw/pitch) clamped at ±38°; panels grouped by speciality; continuous 4°/s spin | Quaternion orientation, free in every direction without flips; a curated mix where neighbours differ; a slow ambient sway that never moves the chosen piece; a magnetic settle after a drag |
+| First piece of the globe | A barbering photo | A facial-care video loop, larger and in front |
+| Space tour | A vertical list of five thumbnails next to a framed photo | An orbital crown on an inclined ellipse, rings drawn with the same geometry, and an arched portal |
+| 3D exploration | — | A real camera with guided bounds, added on top of the orbit without changing its default view |
 
 More detail: [docs/design-engineering.md](docs/design-engineering.md).
 
 ## The world of LUXE: a CSS 3D globe
 
-<p align="center"><img src="showcase/globe-drag.webp" alt="Animation of the services globe in the demo build: a pointer drag turns the sphere of illustrated work panels freely, then inertia fades out and the nearest panel settles in front." width="62%"></p>
+<p align="center"><img src="showcase/production/globe-drag.webp" alt="Recording of the services globe in production: a facial-care clip plays in front, then a drag turns the sphere of client work photographs freely, inertia carries it and it settles on «Barbería y barba» while the side panel updates." width="80%"></p>
+<p align="center"><sub>Production site, 7 s, recorded by the author. <a href="showcase/production/globe-recording.webm">Full 11 s recording (WebM)</a></sub></p>
 
-The services section presents the work as a sphere of panels (photos, two muted video loops and
-emblems) that the visitor can turn in any direction. It is built with **plain DOM and CSS 3D
-transforms**: no WebGL and no 3D library.
+The services section presents the studio's work as a sphere of panels (photos, two muted video
+loops and emblems) that the visitor can turn in any direction. It is built with **plain DOM and
+CSS 3D transforms**: no WebGL and no 3D library.
 
 - **Placement.** Panels sit on a Fibonacci sphere, tangent to its surface, so they are spread
   evenly at any count; specialities are interleaved so that neighbours differ
@@ -179,9 +172,9 @@ Full write-up: [docs/case-study/interactive-globe.md](docs/case-study/interactiv
 
 ## Editorial portfolio
 
-<p align="center"><img src="showcase/gallery.webp" alt="The works section of the demo build: «El resultado habla por sí solo.», category tabs with counts, the current illustrated work large in the centre with its neighbours curving away in 3D, and its title, description, counter and booking button." width="100%"></p>
+<p align="center"><img src="showcase/production/gallery.webp" alt="The works section in production: «El resultado habla por sí solo.», category tabs with counts (Todos 23, Cortes y barbería 08, Peluquería 03, Uñas 09, Cejas 01, Faciales 02), a haircut photograph large in the centre with nail work curving away on both sides, and its title, description, counter and «Reservar mi corte» button." width="100%"></p>
 
-*«El resultado habla por sí solo»* presents the work as a crown: the current piece is large in
+*«El resultado habla por sí solo»* presents 23 works as a crown: the current piece is large in
 the centre and its neighbours curve away in depth, each with its own title, short description
 and a booking button worded for its category.
 
@@ -195,16 +188,13 @@ and a booking button worded for its category.
 - *«Ver en grande»* opens the shared viewer (a `<dialog>` with focus trap and focus return)
   used by every section ([`src/scripts/lightbox.ts`](src/scripts/lightbox.ts)).
 
-Compared with a static grid, the crown keeps one piece in focus at a time with its own story
-and call to action, while the tabs keep the whole archive one step away.
+Compared with a static grid, the crown keeps one piece in focus at a time with its own story and
+call to action, while the tabs keep the whole archive one step away.
 More: [docs/case-study/editorial-gallery.md](docs/case-study/editorial-gallery.md).
 
 ## The space: an orbit inspired by Saturn's rings
 
-<p align="center">
-  <img src="showcase/space-orbit.webp" alt="Animation of the space tour in the demo build: the crown of view cards turns along an inclined ellipse around an arched portal and the portal changes to the selected room." width="38%">
-  <img src="showcase/space-3d.webp" alt="The «Explorar en 3D» mode in the demo build: the camera has moved off-axis, the portal and its photo turn in perspective, and the rings pass in front of and behind the portal." width="60%">
-</p>
+<p align="center"><img src="showcase/production/space.webp" alt="The space section in production: «Hay lugares que se visitan. Otros que se viven.», a crown of five room cards on an ellipse above an arched portal that shows the barbering stations with organic mirrors under hexagonal ceiling lights, diamond arrows set in the frame and the 01 / 05 counter." width="100%"></p>
 
 *«Hay lugares que se visitan. Otros que se viven.»* introduces the rooms: barbering, hair,
 manicure and the waiting area. The visual idea came from Saturn: room cards ride a ring that
@@ -233,6 +223,12 @@ with weight, limited inertia and elastic limits; on touch screens only the horiz
 orbits so vertical scrolling keeps working ([`src/scripts/space-explore.ts`](src/scripts/space-explore.ts)).
 The portal keeps the previous photo until the next has loaded, so it never goes blank
 ([`src/scripts/space-tour.ts`](src/scripts/space-tour.ts)).
+
+<p align="center">
+  <img src="showcase/space-orbit.webp" alt="Demo build, illustrated media: the crown of room cards turns along the ellipse and the portal changes to the selected room." width="38%">
+  <img src="showcase/space-3d.webp" alt="Demo build, illustrated media: the «Explorar en 3D» mode with the camera off-axis, the portal in perspective and the rings passing in front of and behind it." width="60%">
+</p>
+<p align="center"><sub>The motion above comes from the <strong>demo build</strong> (illustrations instead of the studio's photos): the crown turning, and the camera in «Explorar en 3D».</sub></p>
 
 The project notes record that WebGL and Three.js were considered for this scene and set aside.
 The scene is five cards, a portal and four rings, and keeping real DOM preserves tabs, focus,
@@ -298,10 +294,10 @@ written down in [docs/security.md](docs/security.md).
 | Unit | `node:test` | Sphere, quaternion, orbit and camera math; opening hours; links; the publication policy; manifest validation; admin security; a leak guard that hashes every image in the repository |
 | Build | [`scripts/verify-build.ts`](scripts/verify-build.ts) | Runs after every build and before every admin publish: SEO tags, link allowlist, no admin files, no unpublishable media |
 | End to end | Playwright | Each experience by mouse, touch and keyboard; reduced motion; 320 px to 1920 px; 200 % zoom; failing images; the admin, opt-in |
+| Repository | [`scripts/verify-publication.ts`](scripts/verify-publication.ts) | No README image of the production site is published without the business's recorded authorization |
 
-Latest local run (the CI workflow runs the same suites; it has not run on GitHub yet): **225 unit
-tests and 137 end-to-end tests passing**, a clean type check, a verified production build and
-`npm audit` with 0 vulnerabilities.
+Latest local run: **226 unit tests and 137 end-to-end tests passing**, a clean type check, a
+verified production build and `npm audit` with 0 vulnerabilities.
 
 Some lessons from preparing this public version:
 
@@ -320,6 +316,9 @@ Some lessons from preparing this public version:
 More: [docs/testing.md](docs/testing.md).
 
 ## Run it locally
+
+<p align="center"><img src="showcase/cover.webp" alt="What a clone shows: the same home page and layout, with a generated illustration of a reception desk instead of the studio's photograph." width="72%"></p>
+<p align="center"><sub>A clone runs the real interface with <strong>generated demonstration media</strong>: same ids, categories and proportions as the studio's photos, so every interaction behaves the same (<a href="docs/media-policy.md">media policy</a>).</sub></p>
 
 Requires **Node.js 24.7 or later** (native Argon2id) and npm.
 
@@ -353,9 +352,6 @@ Changes are stored in `./.luxe-media/` (git-ignored) and nothing is published. C
 always generated locally; none are included or needed for the public site. Every variable is
 described in [`.env.example`](.env.example).
 
-Other scripts: `npm run demo-media` regenerates the demo illustrations, `npm run showcase`
-re-captures the images in this README from the local build.
-
 ## Challenges and lessons
 
 **From a picture to a system.** The orbit started as an image of Saturn and a ring of cards.
@@ -384,15 +380,13 @@ animation that followed.
 
 Designed and developed by **Jefferson Rojas Brizuela** · [github.com/jefferRB](https://github.com/jefferRB)
 
-The name *LUXE Centro de Belleza*, its logo, photography, client work and business information
-belong to the studio and are not covered by this repository's license.
-
 | Material | Terms |
 |---|---|
 | Source code and documentation | [MIT License](LICENSE) |
-| Generated demo media (`src/assets/demo/`, `showcase/`, `public/` icons) | MIT; no right to the LUXE name or identity |
+| Generated demo media (`src/assets/demo/`, `showcase/*.webp`, `public/` icons) | MIT; no right to the LUXE name or identity |
+| Screenshots and recordings of the production site (`showcase/production/`) | Owned by LUXE Centro de Belleza and the people pictured; published only with the business's written authorization, recorded in [`showcase/production.json`](showcase/production.json); **not** MIT |
 | The studio's name, logo, brand and business information | Not licensed |
-| The studio's photos, videos and client work | Not included and not licensed |
+| The studio's original photos, videos and client work | Not included in the code and not licensed |
 | Third-party names (Drago, WhatsApp, Instagram, Waze, Google Maps) | Belong to their owners |
 
 Details: [NOTICE.md](NOTICE.md) · Security reports: [SECURITY.md](SECURITY.md)

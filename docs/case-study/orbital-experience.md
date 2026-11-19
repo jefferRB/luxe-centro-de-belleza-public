@@ -1,6 +1,7 @@
 # Case study: the space, an orbit inspired by Saturn's rings
 
-<p align="center"><img src="../../showcase/space.webp" alt="The space section of the demo build at rest: «Hay lugares que se visitan. Otros que se viven.», the crown of room cards on an ellipse above an arched portal showing the selected room, arrows set in the frame and the 01 / 05 counter." width="100%"></p>
+<p align="center"><img src="../../showcase/production/space.webp" alt="The space section in production at rest: «Hay lugares que se visitan. Otros que se viven.», the crown of room cards on an ellipse above an arched portal showing the barbering stations, diamond arrows set in the frame and the 01 / 05 counter." width="100%"></p>
+<p align="center"><sub>Production site.</sub></p>
 
 Section 03, *«Hay lugares que se visitan. Otros que se viven.»*, introduces the rooms of the
 studio: the barbering stations from two angles, the hair station, the manicure area and the
@@ -72,6 +73,7 @@ offers a retry if an image fails.
 ## «Explorar en 3D»
 
 <p align="center"><img src="../../showcase/space-3d.webp" alt="The 3D exploration mode in the demo build: the camera is off-axis, the portal turns in perspective and the rings pass in front of and behind it; buttons for the Izquierda, Frente, Elevada and Derecha viewpoints." width="100%"></p>
+<p align="center"><sub>Demo build (illustrated media); no production recording of this mode yet.</sub></p>
 
 - The camera leaves the rest pose and four viewpoint buttons appear (left, front, elevated,
   right), with `aria-pressed` and keyboard access.

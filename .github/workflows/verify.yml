@@ -23,6 +23,8 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      # README images exist, and production screenshots are published only with recorded authorization.
+      - run: npm run verify:publication
       - run: npm run check
       - run: npm test
       # postbuild runs scripts/verify-build.ts (media policy, links, no admin in the static output).

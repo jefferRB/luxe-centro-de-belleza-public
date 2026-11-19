@@ -50,19 +50,27 @@ re-encode the loops). The script records each file's SHA-256 in `manifest.json`.
 The favicon set and `public/og-image.jpg` are generated from a neutral demo mark
 (`public/favicon.svg`) and the demo reception illustration (`npm run favicons`, `npm run og-image`).
 
-## README images (`showcase/`)
+## README images
 
-The screenshots and loops in the README are captured by
-[`scripts/capture-showcase.ts`](../scripts/capture-showcase.ts) from the **local demo build**
-(`dist/client` served on loopback), never from the production site, so they can only contain demo
-media. The script records their hashes in `showcase/manifest.json`; the leak guard rejects any
-other image in that folder. The cover adds a line stating that illustrations replace the studio's
-photography.
+The README and case studies use two kinds of images, and they never mix:
+
+| Folder | What it is | How it is controlled |
+|---|---|---|
+| `showcase/production/` | Screenshots and a screen recording of the **production site**, supplied by the author. They show the studio's photographs, logo and client work, including identifiable people. | Listed with hashes and provenance in [`showcase/production.json`](../showcase/production.json), together with the authorization record. The folder stays git-ignored and `npm run verify:publication` fails until the business's written authorization is recorded. Never used by the application. |
+| `showcase/*.webp` | Captures of the **local demo build**, taken by [`scripts/capture-showcase.ts`](../scripts/capture-showcase.ts) (`dist/client` served on loopback). They contain only demo media. | Hashes in `showcase/manifest.json`; every place that shows one says it comes from the demo build. |
+
+The leak guard (`tests/media-policy.test.ts`) rejects any image or video that is not recorded in
+one of those manifests or in `src/assets/demo/manifest.json`, and fails if application code ever
+references `showcase/production`.
+
+The production captures were only cropped (browser and desktop chrome, stray edge pixels),
+resized and re-encoded; no frame was generated or retouched.
 
 ## Licensing
 
-The demo media and showcase images were generated for this repository and are released under the
-[MIT License](../LICENSE) with the code. They do not grant any right to the LUXE name or identity;
+The demo media and the demo-build captures were generated for this repository and are released
+under the [MIT License](../LICENSE) with the code. The production captures are not: they belong to
+the business and the people pictured. Nothing here grants a right to the LUXE name or identity;
 see [NOTICE.md](../NOTICE.md).
 
 ## Using real media in a deployment

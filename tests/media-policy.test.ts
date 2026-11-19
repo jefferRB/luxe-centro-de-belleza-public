@@ -1,11 +1,12 @@
 /** Leak guard for the public repository: every image or video in the project must be either a
  * generated demo file recorded (by hash) in src/assets/demo/manifest.json, a README capture of
- * the local demo build recorded in showcase/manifest.json, or one of the generated site icons.
- * A client photo copied in by mistake fails here before it can ship. */
+ * the local demo build recorded in showcase/manifest.json, a production screenshot or recording
+ * recorded in showcase/production.json (publication gated by scripts/verify-publication.ts), or
+ * one of the generated site icons. A client photo copied in by mistake fails here. */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { mediaCatalog, receptionPhoto, videoCatalog } from '../src/data/media-catalog.ts';
 
@@ -26,14 +27,26 @@ const files = walk('.');
 type Manifest = { files: Record<string, { sha256: string }> };
 const manifest = JSON.parse(readFileSync('src/assets/demo/manifest.json', 'utf8')) as Manifest;
 const showcase = JSON.parse(readFileSync('showcase/manifest.json', 'utf8')) as Manifest & { source: string };
+const production = JSON.parse(readFileSync('showcase/production.json', 'utf8')) as Manifest;
 const sha = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex');
 
-test('every media file is a recorded demo asset, a recorded showcase capture or a generated site icon', () => {
+test('every media file is a recorded demo asset, a recorded showcase or production capture, or a generated site icon', () => {
   const unexpected = files.filter((file) => MEDIA.test(file))
     .filter((file) => !(file.startsWith('src/assets/demo/') && manifest.files[file.slice('src/assets/demo/'.length)]))
-    .filter((file) => !(file.startsWith('showcase/') && showcase.files[file.slice('showcase/'.length)]))
+    .filter((file) => !(file.startsWith('showcase/production/') && production.files[file.slice('showcase/production/'.length)]))
+    .filter((file) => !(file.startsWith('showcase/') && !file.startsWith('showcase/production/') && showcase.files[file.slice('showcase/'.length)]))
     .filter((file) => !PUBLIC_ICONS.some((icon) => file === `public/${icon}`));
   assert.deepEqual(unexpected, []);
+});
+
+test('production screenshots match their recorded hashes and never feed the application', () => {
+  // The folder is git-ignored until authorization is recorded, so a fresh clone may not have it.
+  for (const [file, { sha256 }] of Object.entries(production.files)) {
+    const path = `showcase/production/${file}`;
+    if (existsSync(path)) assert.equal(sha(path), sha256, path);
+  }
+  const sources = files.filter((file) => /^(src|public)\//.test(file) && /\.(ts|astro|mjs|css|json|svg|webmanifest)$/.test(file));
+  assert.deepEqual(sources.filter((file) => readFileSync(file, 'utf8').includes('showcase/production')), []);
 });
 
 test('demo files match the hashes written by scripts/generate-demo-media.ts', () => {

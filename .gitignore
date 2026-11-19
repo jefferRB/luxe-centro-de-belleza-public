@@ -28,6 +28,11 @@ id_ed25519*
 .luxe-media/
 .luxe-site/
 
+# Screenshots and recordings of the production site: client photographs, logo and client
+# work. Ignored until the business's written authorization is recorded in
+# showcase/production.json (see scripts/verify-publication.ts); then remove this line.
+showcase/production/
+
 # Test and browser-automation artifacts
 test-results/
 playwright-report/

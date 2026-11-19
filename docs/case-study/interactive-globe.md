@@ -1,6 +1,7 @@
 # Case study: the world of LUXE, a CSS 3D globe
 
-<p align="center"><img src="../../showcase/globe.webp" alt="The services section of the demo build: «Un mundo de belleza, en un solo lugar.», the list of five specialities, and the globe of illustrated panels with a video card in front and its caption." width="100%"></p>
+<p align="center"><img src="../../showcase/production/globe.webp" alt="The services section in production: «Un mundo de belleza, en un solo lugar.», the list of five specialities, and the globe of client work photographs with the warm-towel facial clip in front, its caption and the side panel with navigation arrows and the booking button." width="100%"></p>
+<p align="center"><sub>Production site. In motion: <a href="../../showcase/production/globe-drag.webp">7 s loop</a> · <a href="../../showcase/production/globe-recording.webm">11 s recording (WebM)</a></sub></p>
 
 Section 01 of the home page, *«Un mundo de belleza, en un solo lugar.»*, lists the five
 specialities next to a sphere of panels: works, interiors, two muted video loops and, where a
